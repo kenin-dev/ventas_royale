@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.2
+-- version 4.7.0
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 09-10-2018 a las 03:04:05
--- Versión del servidor: 10.1.34-MariaDB
--- Versión de PHP: 5.6.37
+-- Tiempo de generación: 10-10-2018 a las 06:58:20
+-- Versión del servidor: 10.1.26-MariaDB
+-- Versión de PHP: 7.1.8
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -49,6 +49,7 @@ CREATE TABLE `categorias` (
   `id` int(11) NOT NULL,
   `nombre` varchar(45) DEFAULT NULL,
   `descripcion` varchar(100) DEFAULT NULL,
+  `imagen` varchar(500) NOT NULL,
   `estado` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -56,14 +57,14 @@ CREATE TABLE `categorias` (
 -- Volcado de datos para la tabla `categorias`
 --
 
-INSERT INTO `categorias` (`id`, `nombre`, `descripcion`, `estado`) VALUES
-(1, 'HAMBURGUESAS', '', 1),
-(2, 'SALCHIPAPAS', '', 1),
-(3, 'SANDWICH DE FILETE DE POLLO', '', 1),
-(4, 'CERVEZAS ARTESANALES ', '', 1),
-(5, 'BEBIDAS', '', 1),
-(6, 'BEBIDAS CALIENTES', '', 1),
-(7, 'EXTRAS', NULL, 1);
+INSERT INTO `categorias` (`id`, `nombre`, `descripcion`, `imagen`, `estado`) VALUES
+(1, 'HAMBURGUESAS', '', 'storage/categoria/hamburguesas.jpg', 1),
+(2, 'SALCHIPAPAS', '', 'storage/categoria/sachipapa.jpg', 1),
+(3, 'SANDWICH DE FILETE DE POLLO', '', 'storage/categoria/sandwich.jpg', 1),
+(4, 'CERVEZAS ARTESANALES ', '', 'storage/categoria/cervezas.jpg', 1),
+(5, 'BEBIDAS', '', 'storage/categoria/bebidas.jpg', 1),
+(6, 'BEBIDAS CALIENTES', '', 'storage/categoria/bebidas_calientes.jpg', 1),
+(7, 'EXTRAS', NULL, 'storage/categoria/extra.jpg', 1);
 
 -- --------------------------------------------------------
 
@@ -74,6 +75,8 @@ INSERT INTO `categorias` (`id`, `nombre`, `descripcion`, `estado`) VALUES
 CREATE TABLE `clientes` (
   `id` int(11) NOT NULL,
   `nombre` varchar(100) DEFAULT NULL,
+  `ape_paterno` varchar(50) NOT NULL,
+  `ape_materno` varchar(50) NOT NULL,
   `telefono` varchar(20) DEFAULT NULL,
   `direccion` varchar(100) DEFAULT NULL,
   `tipo_cliente_id` int(11) DEFAULT NULL,
@@ -86,9 +89,10 @@ CREATE TABLE `clientes` (
 -- Volcado de datos para la tabla `clientes`
 --
 
-INSERT INTO `clientes` (`id`, `nombre`, `telefono`, `direccion`, `tipo_cliente_id`, `tipo_documento_id`, `num_documento`, `estado`) VALUES
-(1, 'admin', 'admin', 'admin', 1, 1, '45454545', 1),
-(2, '', '', '', 2, 1, '', 1);
+INSERT INTO `clientes` (`id`, `nombre`, `ape_paterno`, `ape_materno`, `telefono`, `direccion`, `tipo_cliente_id`, `tipo_documento_id`, `num_documento`, `estado`) VALUES
+(1, 'Yamilet', 'Polo', 'Jaramillo', 'admin', 'admin', 1, 1, '12345678', 1),
+(3, 'Ana', 'Soriano', 'Suarez', '974547854', 'Caraz', 1, 1, '70609373', 1),
+(4, 'Milagross', 'Rojas', 'Cadillo', '95478414', 'Av. no me acuerdo', 1, 1, '70609370', 1);
 
 -- --------------------------------------------------------
 
@@ -144,7 +148,23 @@ INSERT INTO `detalle_venta` (`id`, `producto_id`, `venta_id`, `precio`, `cantida
 (31, 36, 18, '4.0', '1', '4.0', NULL),
 (32, 44, 18, '3.0', '1', '3.0', NULL),
 (33, 3, 19, '7.0', '1', '7.0', NULL),
-(34, 4, 19, '7.5', '1', '7.5', NULL);
+(34, 4, 19, '7.5', '1', '7.5', NULL),
+(93, 6, 45, '9.0', '1', '9.0', NULL),
+(95, 11, 47, '9.0', '3', '27.00', NULL),
+(96, 17, 47, '9.0', '5', '45.00', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `empleado`
+--
+
+CREATE TABLE `empleado` (
+  `emp_id` int(11) NOT NULL,
+  `per_id` int(11) NOT NULL,
+  `rol_id` int(11) NOT NULL,
+  `emp_estado` int(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -213,12 +233,27 @@ INSERT INTO `permisos` (`id`, `menu_id`, `rol_id`, `read`, `insert`, `update`, `
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `persona`
+--
+
+CREATE TABLE `persona` (
+  `per_id` int(11) NOT NULL,
+  `per_dni` char(8) NOT NULL,
+  `per_nombres` varchar(50) NOT NULL,
+  `per_apellidos` varchar(50) NOT NULL,
+  `per_email` varchar(50) NOT NULL,
+  `per_telefono` char(9) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `productos`
 --
 
 CREATE TABLE `productos` (
   `id` int(11) NOT NULL,
-  `codigo` varchar(50) NOT NULL DEFAULT '0',
+  `abreviatura` varchar(10) NOT NULL DEFAULT '0',
   `nombre` varchar(45) DEFAULT NULL,
   `descripcion` varchar(100) DEFAULT NULL,
   `precio` varchar(45) DEFAULT NULL,
@@ -231,34 +266,26 @@ CREATE TABLE `productos` (
 -- Volcado de datos para la tabla `productos`
 --
 
-INSERT INTO `productos` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `stock`, `categoria_id`, `estado`) VALUES
-(1, '0', 'CLASICA', 'Carne de res, lechuga y tomate. Acompañado con papas fritas.', '5.9', 38, 1, 1),
-(2, '0', 'CON QUESO', 'Carne de res, queso, lechuga y tomate. Acompañado con papas fritas.', '7.0', 30, 1, 1),
-(3, '0', 'MONTADA', 'Carne de res, huevo, lechuga y tomate. Acompañado con papas fritas.', '7.0', 18, 1, 1),
-(4, '0', 'DOBLE QUESO ', 'Carne de res, doble queso, lechuga y tomate. Acompañado con papas fritas.', '7.5', 19, 1, 1),
-(5, '0', 'LAROYALE ', 'Carne de res, huevo, queso, lechuga y tomate. Acompañado con papas fritas.', '9.0', 13, 1, 1),
-(6, '0', 'ITALIANA', 'Carne de res, queso al orégano, albaca fresca, lechuga y tomate. Acompañado con papas fritas.', '9.0', 19, 1, 1),
-(7, '0', 'MEXICANA', 'Carne de res, queso, guaca-mole, nachos, lechuga y tomate. Acompañado con papas fritas.', '8.5', 19, 1, 1),
-(8, '0', 'AMERICANA', 'Carne de res, tocino ahumado, queso, lechuga y tomate. Acompañado de papas fritas.', '9.0', 14, 1, 1),
-(9, '0', 'A LO POBRE ', 'Carne de res, huevo, plátano, cebolla, lechuga y tomate. Acompañado con papas fritas.', '8.0', 20, 1, 1),
-(10, '0', 'HUACHANA', 'Carne de res, salchicha huachana, papas al hilo, lechuga y tomate. Acompañado con papas fritas.', '8.5', 20, 1, 1),
-(11, '0', 'HAWAIANA', 'Carne de res, piña fresca, queso, jamón ingles, lechuga y tomate. Acompañado con papas fritas.', '9.0', 20, 1, 1),
-(12, '0', 'GAUCHA', 'Carne de res, chorizo parrillero, chimichurri, lechuga y tomate. Acompañado de papas fritas.', '9.5', 20, 1, 1),
-(13, '0', 'CLUB SANDWICH', 'Carne de res, tocino ahumado, huevo, jamón ingles, queso, lechuga y tomate. Acompañado de papas frit', '10.0', 20, 1, 1),
-(14, '0', 'CLASICA', 'Papas fritas y salchicha ahumada.', '7.0', 9, 2, 1),
-(15, '0', 'CON QUESO ', 'Papas fritas, salchicha ahumada y queso.', '8.0', 8, 2, 1),
-(16, '0', 'MONTADA ', 'Papas fritas, salchicha ahumada y huevo.', '8.0', 9, 2, 1),
-(17, '0', 'LAROYALE', 'Papas fritas, salchicha ahumada, huevo y queso.', '9.0', 7, 2, 1),
-(18, '0', 'A LO POBRE', 'Papas fritas, salchicha ahumada, huevo y plátano.', '9.0', 8, 2, 1),
-(19, '0', 'AMERICANA ', 'Papas fritas, salchicha ahumada, queso y tocino ahumado.', '10.0', 10, 1, 1),
-(20, '0', 'CHORIPAPA', 'Papas fritas, mix de salchicha y chorizo ahumado.', '12.0', 8, 2, 1),
-(21, '0', 'SIMPLE', 'Filete de pollo, lechuga y tomate. Acompañado de papas fritas.', '5.9', 10, 3, 1),
-(22, '0', 'CON QUESO', 'Filete de pollo,queso, lechuga y tomate. Acompañado de papas fritas.', '7.0', 10, 3, 1),
-(23, '0', 'MONTADA', 'Filete de pollo,huevo, lechuga y tomate. Acompañado de papas fritas.', '7.0', 9, 3, 1),
+INSERT INTO `productos` (`id`, `abreviatura`, `nombre`, `descripcion`, `precio`, `stock`, `categoria_id`, `estado`) VALUES
+(2, 'C-QUES', 'CON QUESO', 'Carne de res, queso, lechuga y tomate. Acompañado con papas fritas.', '7.0', 30, 1, 1),
+(3, 'MONT', 'MONTADA', 'Carne de res, huevo, lechuga y tomate. Acompañado con papas fritas.', '7.0', 18, 1, 1),
+(4, 'DOB-QUES', 'DOBLE QUESO ', 'Carne de res, doble queso, lechuga y tomate. Acompañado con papas fritas.', '7.5', 19, 1, 1),
+(5, 'LAROY', 'LAROYALE ', 'Carne de res, huevo, queso, lechuga y tomate. Acompañado con papas fritas.', '9.0', 13, 1, 1),
+(6, 'ITAL', 'ITALIANA', 'Carne de res, queso al orégano, albaca fresca, lechuga y tomate. Acompañado con papas fritas.', '9.0', 18, 1, 1),
+(7, 'MEX', 'MEXICANA', 'Carne de res, queso, guaca-mole, nachos, lechuga y tomate. Acompañado con papas fritas.', '8.5', 19, 1, 1),
+(10, 'HUACH', 'HUACHANA', 'Carne de res, salchicha huachana, papas al hilo, lechuga y tomate. Acompañado con papas fritas.', '8.5', 20, 1, 1),
+(11, 'HAWAI', 'HAWAIANA', 'Carne de res, piña fresca, queso, jamón ingles, lechuga y tomate. Acompañado con papas fritas.', '9.0', 17, 1, 1),
+(12, 'GAU', 'GAUCHA', 'Carne de res, chorizo parrillero, chimichurri, lechuga y tomate. Acompañado de papas fritas.', '9.5', 20, 1, 1),
+(14, 'CLAS', 'CLASICA', 'Papas fritas y salchicha ahumada.', '7.0', 9, 2, 1),
+(16, 'MONT', 'MONTADA ', 'Papas fritas, salchicha ahumada y huevo.', '8.0', 9, 2, 1),
+(17, 'LAROY', 'LAROYALE', 'Papas fritas, salchicha ahumada, huevo y queso.', '9.0', 2, 2, 1),
+(18, 'POBR', 'A LO POBRE', 'Papas fritas, salchicha ahumada, huevo y plátano.', '9.0', 8, 2, 1),
+(20, 'CHORPP', 'CHORIPAPA', 'Papas fritas, mix de salchicha y chorizo ahumado.', '12.0', 8, 2, 1),
+(21, 'SIMP', 'SIMPLE', 'Filete de pollo, lechuga y tomate. Acompañado de papas fritas.', '5.9', 10, 3, 1),
+(23, 'MONT', 'MONTADA', 'Filete de pollo,huevo, lechuga y tomate. Acompañado de papas fritas.', '7.0', 9, 3, 1),
 (24, '0', 'LAROYALE', 'Filete de pollo,huevo, queso,lechuga y tomate. Acompañado de papas fritas.', '8.0', 10, 3, 1),
 (25, '0', 'ITALIANA', 'Filete de pollo, queso al orégano, albaca fresca,lechuga y tomate. Acompañado de papas fritas.', '7.5', 10, 3, 1),
 (26, '0', 'AMERICANA', 'Filete de pollo,tocino ahumado, queso,lechuga y tomate. Acompañado de papas fritas.', '9.0', 9, 3, 1),
-(27, '0', 'HAWAIANA', 'Filete de pollo,piña fresca, jamón ingles, queso,lechuga y tomate. Acompañado de papas fritas.', '9.0', 10, 3, 1),
 (28, '0', 'CLUB SANDWICH', 'Filete de pollo,tocino ahumado,huevo,jamón ingles, queso,lechuga y tomate. Acompañado de papas frita', '10.0', 9, 3, 1),
 (29, '0', 'INTI GOLDEN ALE ', 'Cerveza ligera y suave ', '10.0', 9, 4, 1),
 (30, '0', 'ALPAMAYO AMBER ALE', 'Balance perfecto de lúpulo y malta con toques de caramelo y cebada.', '10.0', 6, 4, 1),
@@ -336,9 +363,9 @@ CREATE TABLE `tipo_comprobante` (
 --
 
 INSERT INTO `tipo_comprobante` (`id`, `nombre`, `cantidad`, `igv`, `serie`) VALUES
-(1, 'Factura', 6, 18, 1),
-(2, 'Boleta', 15, 0, 1),
-(3, 'Nota de Venta', 13, 0, 1);
+(1, 'Factura', 7, 18, 1),
+(2, 'Boleta', 17, 0, 1),
+(3, 'Nota de Venta', 14, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -357,7 +384,7 @@ CREATE TABLE `tipo_documento` (
 --
 
 INSERT INTO `tipo_documento` (`id`, `nombre`, `cantidad`) VALUES
-(1, 'DNI', 1),
+(1, 'DNI', 8),
 (2, 'RUC', NULL);
 
 -- --------------------------------------------------------
@@ -368,10 +395,10 @@ INSERT INTO `tipo_documento` (`id`, `nombre`, `cantidad`) VALUES
 
 CREATE TABLE `usuarios` (
   `id` int(11) NOT NULL,
-  `nombres` varchar(100) DEFAULT NULL,
-  `apellidos` varchar(100) DEFAULT NULL,
-  `telefono` varchar(20) DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
+  `nombres` varchar(50) NOT NULL,
+  `apellidos` varchar(50) NOT NULL,
+  `telefono` varchar(11) NOT NULL,
+  `email` varchar(50) NOT NULL,
   `username` varchar(45) DEFAULT NULL,
   `password` varchar(100) DEFAULT NULL,
   `rol_id` int(11) DEFAULT NULL,
@@ -383,7 +410,8 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nombres`, `apellidos`, `telefono`, `email`, `username`, `password`, `rol_id`, `estado`) VALUES
-(1, 'admin', 'admin', 'admin', 'admin', 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 2, 1);
+(1, 'Eduardo', 'Cruz', '94784756', 'eduardo@hotmail.com', 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 2, 1),
+(2, 'Carlos', 'Ramos', '904785469', 'carlos@gmail.com', 'coda', '7c4a8d09ca3762af61e59520943dc26494f8941b', 2, 1);
 
 -- --------------------------------------------------------
 
@@ -404,6 +432,14 @@ CREATE TABLE `ventas` (
   `num_documento` varchar(45) DEFAULT NULL,
   `serie` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Volcado de datos para la tabla `ventas`
+--
+
+INSERT INTO `ventas` (`id`, `fecha`, `subtotal`, `igv`, `descuento`, `total`, `tipo_comprobante_id`, `cliente_id`, `usuario_id`, `num_documento`, `serie`) VALUES
+(45, '2014-02-09', '9.00', '0.00', '0.00', '9.00', 3, 1, 2, '000014', '1'),
+(47, '2014-02-09', '72.00', '12.96', '0.00', '84.96', 1, 2, 2, '000007', '1');
 
 --
 -- Índices para tablas volcadas
@@ -433,6 +469,14 @@ ALTER TABLE `detalle_venta`
   ADD KEY `fk_producto_detalle_idx` (`producto_id`);
 
 --
+-- Indices de la tabla `empleado`
+--
+ALTER TABLE `empleado`
+  ADD PRIMARY KEY (`emp_id`),
+  ADD KEY `per_id` (`per_id`),
+  ADD KEY `rol_id` (`rol_id`);
+
+--
 -- Indices de la tabla `menus`
 --
 ALTER TABLE `menus`
@@ -445,6 +489,12 @@ ALTER TABLE `permisos`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_menus_idx` (`menu_id`),
   ADD KEY `fk_rol_idx` (`rol_id`);
+
+--
+-- Indices de la tabla `persona`
+--
+ALTER TABLE `persona`
+  ADD PRIMARY KEY (`per_id`);
 
 --
 -- Indices de la tabla `productos`
@@ -484,7 +534,6 @@ ALTER TABLE `tipo_documento`
 ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `username_UNIQUE` (`username`),
-  ADD UNIQUE KEY `email_UNIQUE` (`email`),
   ADD KEY `fk_rol_usuarios_idx` (`rol_id`);
 
 --
@@ -505,73 +554,71 @@ ALTER TABLE `ventas`
 --
 ALTER TABLE `categorias`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
 --
 -- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT de la tabla `detalle_venta`
 --
 ALTER TABLE `detalle_venta`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=92;
-
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=97;
+--
+-- AUTO_INCREMENT de la tabla `empleado`
+--
+ALTER TABLE `empleado`
+  MODIFY `emp_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `menus`
 --
 ALTER TABLE `menus`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
-
 --
 -- AUTO_INCREMENT de la tabla `permisos`
 --
 ALTER TABLE `permisos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
-
+--
+-- AUTO_INCREMENT de la tabla `persona`
+--
+ALTER TABLE `persona`
+  MODIFY `per_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
-
 --
 -- AUTO_INCREMENT de la tabla `roles`
 --
 ALTER TABLE `roles`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
 --
 -- AUTO_INCREMENT de la tabla `tipo_cliente`
 --
 ALTER TABLE `tipo_cliente`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
 --
 -- AUTO_INCREMENT de la tabla `tipo_comprobante`
 --
 ALTER TABLE `tipo_comprobante`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
 --
 -- AUTO_INCREMENT de la tabla `tipo_documento`
 --
 ALTER TABLE `tipo_documento`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT de la tabla `ventas`
 --
 ALTER TABLE `ventas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
-
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 --
 -- Restricciones para tablas volcadas
 --
@@ -584,11 +631,11 @@ ALTER TABLE `clientes`
   ADD CONSTRAINT `fk_tipo_documento` FOREIGN KEY (`tipo_documento_id`) REFERENCES `tipo_documento` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
--- Filtros para la tabla `detalle_venta`
+-- Filtros para la tabla `empleado`
 --
-ALTER TABLE `detalle_venta`
-  ADD CONSTRAINT `fk_producto_detalle` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_venta_detalle` FOREIGN KEY (`venta_id`) REFERENCES `ventas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `empleado`
+  ADD CONSTRAINT `empleado_ibfk_1` FOREIGN KEY (`per_id`) REFERENCES `persona` (`per_id`),
+  ADD CONSTRAINT `empleado_ibfk_2` FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`);
 
 --
 -- Filtros para la tabla `permisos`
@@ -596,26 +643,6 @@ ALTER TABLE `detalle_venta`
 ALTER TABLE `permisos`
   ADD CONSTRAINT `fk_menus` FOREIGN KEY (`menu_id`) REFERENCES `menus` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `fk_rol` FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
--- Filtros para la tabla `productos`
---
-ALTER TABLE `productos`
-  ADD CONSTRAINT `fk_categoria_producto` FOREIGN KEY (`categoria_id`) REFERENCES `categorias` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
--- Filtros para la tabla `usuarios`
---
-ALTER TABLE `usuarios`
-  ADD CONSTRAINT `fk_rol_usuarios` FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
--- Filtros para la tabla `ventas`
---
-ALTER TABLE `ventas`
-  ADD CONSTRAINT `fk_cliente_venta` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_tipo_comprobante_venta` FOREIGN KEY (`tipo_comprobante_id`) REFERENCES `tipo_comprobante` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_usuario_venta` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
