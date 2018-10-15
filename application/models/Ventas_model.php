@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Ventas_model extends CI_Model {
 
 	public function getVentas(){
-		$this->db->select("v.*,c.nombre,tc.nombre as tipocomprobante");
+		$this->db->select("v.*,c.nombre,c.ape_paterno,c.ape_materno,tc.nombre as tipocomprobante");
 		$this->db->from("ventas v");
 		$this->db->join("clientes c","v.cliente_id = c.id");
 		$this->db->join("tipo_comprobante tc","v.tipo_comprobante_id = tc.id");
@@ -138,6 +138,13 @@ class Ventas_model extends CI_Model {
   		$sql = "DELETE FROM detalle_venta WHERE detalle_venta.venta_id = '$id'";
   		$query = $this->db->query($sql);
   		return $query;  	
+    }
+
+    public function info_venta($id){
+
+    	$sql = "call pa_venta_info($id)";
+    	$consulta = $this->db->query($sql);
+    	return $consulta->result();
     }
 
 }

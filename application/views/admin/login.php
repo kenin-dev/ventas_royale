@@ -6,31 +6,29 @@
   <title>AdminLTE 2 | Log in</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  
-  <!-- base_url() = http://localhost/ventas_ci/-->
-
-  <!-- Bootstrap 3.3.7 -->
+  <link rel="icon" href="<?php echo base_url();?>assets/img/ventas_isotipo.png" type="icon/png">
   <link rel="stylesheet" href="<?php echo base_url();?>assets/template/bootstrap/css/bootstrap.min.css">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="<?php echo base_url();?>assets/template/font-awesome/css/font-awesome.min.css">
 
   <!-- Theme style -->
-  <link rel="stylesheet" href="<?php echo base_url();?>assets/template/dist/css/AdminLTE.min.css">
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/template/dist/css/AdminLTE.css">
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/fonts/Monda/monda.css">
 
 </head>
-<body class="hold-transition login-page">
+<body class="hold-transition login-page" style="background: url(<?= base_url();?>assets/img/wall.jpg);background-repeat: no-repeat;background-size: 100%; background-position: center; background-attachment: fixed;">
     <div class="login-box">
-        <div class="login-logo">
-            <h2>SISTEMA DE VENTAS</h2>
-        </div>
         <!-- /.login-logo -->
         <div class="login-box-body">
-            <p class="login-box-msg">Introduzca sus datos de ingreso</p>
-            <?php if($this->session->flashdata("error")):?>
-              <div class="alert alert-danger">
-                <p><?php echo $this->session->flashdata("error")?></p>
-              </div>
-            <?php endif; ?>
+          <div class="login-logo">
+              <img src="<?php echo base_url();?>assets/img/ventas_isologo.png" alt="ventas_logo" class="img-responsive">
+              <h3><small>CONTROL DE ACCESO</small></h3>
+          </div>
+          <?php if($this->session->flashdata("error")):?>
+            <div class="alert alert-danger">
+              <p><?php echo $this->session->flashdata("error")?></p>
+            </div>
+          <?php endif; ?>
             <form action="<?php echo base_url();?>auth/login" method="post">
                 <div class="form-group has-feedback">
                     <input type="text" class="form-control" placeholder="Usuario" name="username">
@@ -42,7 +40,7 @@
                 </div>
                 <div class="row">
                     <div class="col-xs-12">
-                        <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+                        <button type="submit" class="btn btn-success btn-block btn-flat">Acceder</button>
                     </div>
                     <!-- /.col -->
                 </div>

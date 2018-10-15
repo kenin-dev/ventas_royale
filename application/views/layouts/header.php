@@ -19,11 +19,11 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="<?php echo base_url();?>assets/template/font-awesome/css/font-awesome.min.css">
     <!-- Theme style -->
-    <link rel="stylesheet" href="<?php echo base_url();?>assets/template/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="<?php echo base_url();?>assets/template/dist/css/AdminLTE.css">
     <!-- AdminLTE Skins. Choose a skin from the css/skins
     folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="<?php echo base_url();?>assets/template/dist/css/skins/_all-skins.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link rel="stylesheet" href="<?php echo base_url();?>assets/fonts/Monda/monda.css">
     
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -34,11 +34,11 @@
             <a href="<?php echo base_url();?>" class="logo">
                 <!-- mini logo for sidebar mini 50x50 pixels -->
                 <span class="logo-mini">
-                    <img src="<?php echo base_url();?>assets/img/control-logo.png" alt="">
+                    <img src="<?php echo base_url();?>assets/img/ventas_dash_isotipo.png" alt="">
                 </span>
                 <!-- logo for regular state and mobile devices -->
                 <span class="logo-lg">
-                    <img src="<?php echo base_url();?>assets/img/control-logo-banner.png" alt="">
+                    <img src="<?php echo base_url();?>assets/img/ventas_dash_isologo.png" alt="">
                 </span>
             </a>
             <!-- Header Navbar: style can be found in header.less -->

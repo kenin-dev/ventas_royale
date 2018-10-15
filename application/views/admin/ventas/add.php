@@ -68,15 +68,16 @@
                                             getFecha(){
                                                 var d = new Date();
                                                 var year  = d.getFullYear();
-                                                var month = (d.getMonth()>9) ? d.getMonth() : '0'+d.getMonth();
-                                                var day   = (d.getDay()>9) ? d.getDay() : '0'+d.getDay();
+                                                var fake_m = d.getMonth() + 1;
+                                                var month = ( fake_m > 9 ) ? fake_m : '0'+fake_m;
+                                                var day   = (d.getDate()>9) ? d.getDate() : '0'+d.getDate();
                                                 return year+'-'+month+'-'+day;
+                                                // console.log("In: "+year+'-'+month+'-'+day);
                                             }
                                         }
-                                        var cf = new fecha();
-
-                                        document.getElementById("fecha_actual").defaultValue = cf.getFecha();
-                                        console.log(cf.getFecha());
+                                        var f = new fecha();
+                                        document.getElementById("fecha_actual").defaultValue = f.getFecha();
+                                        // console.log("Out: "+f.getFecha());
                                     </script>
                                 </div>
                             </div>
@@ -118,11 +119,10 @@
                                     <tr>
                                         <th>Abreviatura</th>
                                         <th>Nombre</th>
-
                                         <th>Precio</th>
-                                        <th>Stock Max.</th>
                                         <th>Cantidad</th>
                                         <th>Importe</th>
+                                        <th>Detalles</th>
                                         <th></th>
                                     </tr>
                                 </thead>

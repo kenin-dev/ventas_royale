@@ -27,7 +27,7 @@ class Ventas extends CI_Controller {
 		$this->load->view("admin/reportes/ventas",$data);
 		$this->load->view("layouts/footer");
 	}
-        public function edit($id){
+    public function edit($id){
 		$data  = array(
 			'cliente' => $this->Clientes_model->getCliente($id), 
 			"tipoclientes" => $this->Clientes_model->getTipoClientes(),
@@ -38,8 +38,19 @@ class Ventas extends CI_Controller {
 		$this->load->view("admin/ventas/edit",$data);
 		$this->load->view("layouts/footer");
 	}
-        
-        
-        
+
+	public function venta_pedido(){
+		$id = $this->input->post('id');
+		if (strlen($id)>0) {	
+			// $this->load->model->('Ventas_model');
+			$info = $this->Ventas_model->info_venta($id);
+			echo json_encode($info);
+			
+
+		}else{
+			echo 'Datos Incompletos';
+		}
+
+	}    
         
 }
