@@ -33,4 +33,10 @@ class Productos_model extends CI_Model {
             $resultados = $this->db->get();
             return $resultados->result();
 	}
+
+	public function get_cat_productos($id){
+		$sql = "call pa_categoria_producto($id)";
+		$resultado = $this->db->query($sql);
+		return $resultado->result();
+	}
 }

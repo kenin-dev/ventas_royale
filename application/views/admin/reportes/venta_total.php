@@ -9,11 +9,30 @@
         <div class="box box-solid">
             <div class="box-body">
                 <form action="<?= base_url() .'reportes/ventatotal' ?>" method="POST">
-                    <div class="form-group">
+                    <div class="col-md-4">
                         <label for="">Fecha</label>
-                        <input value="<?=$fecha?>" type="date" name="fecha" id="fecha" class="form-control">
+                        <input type="date" name="fecha" id="fecha" class="form-control">
+                        <script>
+                            class fecha{
+                                getFecha(){
+                                    var d = new Date();
+                                    var year  = d.getFullYear();
+                                    var fake_m = d.getMonth() + 1;
+                                    var month = ( fake_m > 9 ) ? fake_m : '0'+fake_m;
+                                    var day   = (d.getDate()>9) ? d.getDate() : '0'+d.getDate();
+                                    return year+'-'+month+'-'+day;
+                                    // console.log("In: "+year+'-'+month+'-'+day);
+                                }
+                            }
+                            var f = new fecha();
+                            document.querySelector("[name=fecha]").defaultValue = f.getFecha();
+                        </script>
                     </div>
-                    <button class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
+                    <div class="col-md-4">
+                        <br>
+                        <label for="">&nbsp;</label>
+                        <button class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
+                    </div>
                 </form>
             </div>
         </div>

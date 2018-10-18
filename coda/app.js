@@ -1,4 +1,9 @@
 $(document).ready(function () {
+    //Variables Globales
+    let producto_memoria = "";
+
+
+
     var year = (new Date).getFullYear();
     datagrafico(base_url,year);
     $("#year").on("change",function(){
@@ -70,7 +75,7 @@ $(document).ready(function () {
         });
 
     });
-    $('#example').DataTable( {
+    $('#exampletest').DataTable( {
         dom: 'Bfrtip',
         buttons: [
             {
@@ -107,7 +112,7 @@ $(document).ready(function () {
         }
     });
  
-	$('#example1').DataTable({
+	$('#tabla_pedido').DataTable({
         "language": {
             "lengthMenu": "Mostrar _MENU_ registros por pagina",
             "zeroRecords": "No se encontraron resultados en su busqueda",
@@ -125,6 +130,23 @@ $(document).ready(function () {
         }
     });
     $('.example1').DataTable({
+        "language": {
+            "lengthMenu": "Mostrar _MENU_ registros por pagina",
+            "zeroRecords": "No se encontraron resultados en su busqueda",
+            "searchPlaceholder": "Buscar registros",
+            "info": "Mostrando registros de _START_ al _END_ de un total de  _TOTAL_ registros",
+            "infoEmpty": "No existen registros",
+            "infoFiltered": "(filtrado de un total de _MAX_ registros)",
+            "search": "Buscar:",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            },
+        }
+    });
+    $('#example1').DataTable({
         "language": {
             "lengthMenu": "Mostrar _MENU_ registros por pagina",
             "zeroRecords": "No se encontraron resultados en su busqueda",
@@ -217,14 +239,14 @@ $(document).ready(function () {
         $(this).closest("tr").remove();
         sumar();
     });
-    $(document).on("keyup","#tbventas input.cantidades", function(){
-        cantidad = $(this).val();
-        precio = $(this).closest("tr").find("td:eq(2)").text();
-        importe = cantidad * precio;
-        $(this).closest("tr").find("td:eq(4)").children("p").text(importe.toFixed(2));
-        $(this).closest("tr").find("td:eq(4)").children("input").val(importe.toFixed(2));
-        sumar();
-    });
+    // $(document).on("keyup","#tbventas input .calcula", function(){
+    //     cantidad = $(this).val();
+    //     precio = $(this).closest("tr").find("td:eq(3)").text();
+    //     importe = cantidad * precio;
+    //     $(this).closest("tr").find("td:eq(5)").children("p").text(importe.toFixed(2));
+    //     $(this).closest("tr").find("td:eq(5)").children("input").val(importe.toFixed(2));
+    //     sumar();
+    // });
     $(document).on("click",".btn-view-venta",function(){
         valor_id = $(this).val();
         $.ajax({
@@ -269,17 +291,17 @@ function generarnumero(numero){
 
 
 function sumar(){
-    subtotal = 0;
-    $("#tbventas tbody tr").each(function(){
-        subtotal = subtotal + Number($(this).find("td:eq(4)").text());
-    });
-    $("input[name=subtotal]").val(subtotal.toFixed(2));
-    porcentaje = $("#igv").val();
-    igv = subtotal * (porcentaje/100);
-    $("input[name=igv]").val(igv.toFixed(2));
-    descuento = $("input[name=descuento]").val();
-    total = subtotal + igv - descuento;
-    $("input[name=total]").val(total.toFixed(2));
+    // subtotal = 0;
+    // $("#tbventas tbody tr").each(function(){
+    //     subtotal = subtotal + Number($(this).find("td:eq(5)").text());
+    // });
+    // $("input[name=subtotal]").val(subtotal.toFixed(2));
+    // porcentaje = $("#igv").val();
+    // igv = subtotal * (porcentaje/100);
+    // $("input[name=igv]").val(igv.toFixed(2));
+    // descuento = $("input[name=descuento]").val();
+    // total = subtotal + igv - descuento;
+    // $("input[name=total]").val(total.toFixed(2));
 
 }
 function datagrafico(base_url,year){
@@ -365,7 +387,8 @@ function seleccionarCategoria($idCategoria) {
             // console.log(data);
             $("#producto").autocomplete({
                 source: $.map(data, function(el, i) {
-                    return $.extend(true, {}, el, { label: el.nombre });
+                    // Cambio aqui
+                    return $.extend(true, {}, el, { label: el.nombre+' - S/ '+el.precio });
                 }),
                 minLength: 0,
                 select:function(event, ui){
@@ -394,3 +417,4 @@ function soloNumeros(e){
     tecla_final = String.fromCharCode(tecla);
     return patron.test(tecla_final);
 }
+

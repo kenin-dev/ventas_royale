@@ -21,8 +21,8 @@ class Ventas_model extends CI_Model {
 		$this->db->from("ventas v");
 		$this->db->join("clientes c","v.cliente_id = c.id");
 		$this->db->join("tipo_comprobante tc","v.tipo_comprobante_id = tc.id");
-		$this->db->where("v.fecha >=",$fechainicio);
-		$this->db->where("v.fecha <=",$fechafin);
+		$this->db->where("v.ven_fecha >=",$fechainicio);
+		$this->db->where("v.ven_fecha <=",$fechafin);
 		$resultados = $this->db->get();
 		if ($resultados->num_rows() > 0) {
 			return $resultados->result();
@@ -74,6 +74,19 @@ class Ventas_model extends CI_Model {
 		return $this->db->insert("ventas",$data);
 	}
 
+	public function guardar_pedido($pedido){
+		return $this->db->insert("ventas",$pedido);
+	}
+
+	public function guardar_pedido_detalle($data){
+		
+		if ($this->db->insert("detalle_venta",$data)) {
+			return 1;
+		}else{
+			return 0;
+		}
+	}
+
 	public function lastID(){
 		return $this->db->insert_id();
 	}
@@ -88,7 +101,7 @@ class Ventas_model extends CI_Model {
 	}
 
 	public function years(){
-		$this->db->select("YEAR(fecha) as year");
+		$this->db->select("YEAR(ven_fecha) as year");
 		$this->db->from("ventas");
 		$this->db->group_by("year");
 		$this->db->order_by("year","desc");
@@ -97,10 +110,10 @@ class Ventas_model extends CI_Model {
 	}
 
 	public function montos($year){
-		$this->db->select("MONTH(fecha) as mes, SUM(total) as monto");
+		$this->db->select("MONTH(ven_fecha) as mes, SUM(ven_total) as monto");
 		$this->db->from("ventas");
-		$this->db->where("fecha >=",$year."-01-01");
-		$this->db->where("fecha <=",$year."-12-31");
+		$this->db->where("ven_fecha >=",$year."-01-01");
+		$this->db->where("ven_fecha <=",$year."-12-31");
 		$this->db->group_by("mes");
 		$this->db->order_by("mes");
 		$resultados = $this->db->get();
@@ -147,4 +160,42 @@ class Ventas_model extends CI_Model {
     	return $consulta->result();
     }
 
+    public function get_ventas(){
+    	$sql = "SELECT v.id as 'venta_id',v.fecha as 'venta_fecha',v.subtotal as 'venta_subtotal',v.tipo_consumo as 'venta_tipo_consumo',v.destino as 'venta_destino',v.estado as 'venta_estado' FROM ventas v 
+    	WHERE v.estado = 'venta'";
+    	$consulta = $this->db->query($sql);
+    	return $consulta->result();
+    }
+
+    public function get_pedidos(){
+    	$sql = "SELECT v.id as 'venta_id',v.fecha as 'venta_fecha',v.subtotal as 'venta_subtotal',v.tipo_consumo as 'venta_tipo_consumo',v.destino as 'venta_destino',v.estado as 'venta_estado' FROM ventas v 
+    	WHERE v.estado = 'pedido'";
+    	$consulta = $this->db->query($sql);
+    	return $consulta->result();
+
+    }
+    public function get_pedidos_id($id){
+    	$sql = "SELECT v.id as 'venta_id',v.fecha as 'venta_fecha',v.subtotal as 'venta_subtotal',v.tipo_consumo as 'venta_tipo_consumo',v.destino as 'venta_destino',v.estado as 'venta_estado' FROM ventas v 
+    	WHERE v.estado = 'pedido' AND v.id = '$id'";
+    	$consulta = $this->db->query($sql);
+    	return $consulta->result();
+
+    }
+
+    //METODOS NUEVOS
+    public function insertar_venta($data){
+		return $this->db->insert("ventas",$data);
+	}
+
+	public function consultar_ventas(){
+    	$sql = "select v.ven_id,v.ven_fecha,v.ven_igv,v.ven_descuento,v.ven_total,v.ven_total,v.tipo_comprobante_id,v.num_documento,v.serie,v.ven_monto_recibido,v.ven_monto_devuelto,p.ped_tipo_consumo,p.ped_subtotal,p.ped_destino,concat(c.nombre,' ',c.ape_paterno,' ',c.ape_materno) as 'cli_nombres' from ventas v INNER JOIN pedido p ON v.pedido_id = p.ped_id INNER JOIN clientes c ON v.cliente_id = c.id";
+		$resultado = $this->db->query($sql);
+		return $resultado->result();
+    }
+
+    public function consultar_ventas_avanzado($id){
+    	$sql = "CALL pa_venta_info('$id')";
+		$resultado = $this->db->query($sql);
+		return $resultado->result();
+    }
 }

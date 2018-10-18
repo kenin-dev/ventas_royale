@@ -82,7 +82,7 @@ class Productos extends CI_Controller {
 
 	public function update(){
 		$idproducto = $this->input->post("idproducto");
-		$codigo = $this->input->post("codigo");
+		$abreviatura = $this->input->post("abreviatura");
 		$nombre = $this->input->post("nombre");
 		$descripcion = $this->input->post("descripcion");
 		$precio = $this->input->post("precio");
@@ -91,14 +91,14 @@ class Productos extends CI_Controller {
 
 		$productoActual = $this->Productos_model->getProducto($idproducto);
 
-		if ($codigo == $productoActual->codigo) {
+		if ($idproducto == $productoActual->id) {
 			$is_unique = '';
 		}
 		else{
-			$is_unique = '|is_unique[productos.codigo]';
+			$is_unique = '|is_unique[productos.abreviatura]';
 		}
 
-		$this->form_validation->set_rules("codigo","Codigo","required".$is_unique);
+		$this->form_validation->set_rules("abreviatura","abreviatura","required".$is_unique);
 		$this->form_validation->set_rules("nombre","Nombre","required");
 		$this->form_validation->set_rules("precio","Precio","required");
 		$this->form_validation->set_rules("stock","Stock","required");
@@ -106,7 +106,7 @@ class Productos extends CI_Controller {
 
 		if ($this->form_validation->run()) {
 			$data  = array(
-				'codigo' => $codigo, 
+				'abreviatura' => $abreviatura, 
 				'nombre' => $nombre,
 				'descripcion' => $descripcion,
 				'precio' => $precio,
@@ -132,6 +132,12 @@ class Productos extends CI_Controller {
 		);
 		$this->Productos_model->update($id,$data);
 		echo "mantenimiento/productos";
+	}
+
+	public function categoria_productos_rest(){
+		$cate_id = $this->input->post('categoria');
+		$productos = $this->Productos_model->get_cat_productos($cate_id);
+		echo json_encode($productos);
 	}
 
 }

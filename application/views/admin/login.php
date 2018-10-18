@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="<?php echo base_url();?>assets/fonts/Monda/monda.css">
 
 </head>
-<body class="hold-transition login-page" style="background: url(<?= base_url();?>assets/img/wall.jpg);background-repeat: no-repeat;background-size: 100%; background-position: center; background-attachment: fixed;">
+<body class="hold-transition login-page" style="background: url(<?= base_url();?>assets/img/comida.jpg);background-repeat: no-repeat;background-size: 100%; background-position: center; background-attachment: fixed;">
     <div class="login-box">
         <!-- /.login-logo -->
         <div class="login-box-body">

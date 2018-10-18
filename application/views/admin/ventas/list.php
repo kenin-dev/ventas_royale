@@ -114,33 +114,6 @@
   </div>
 </div>
 
-<div class="modal fade" id="modal-pedido">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span></button>
-                <!-- <h4 class="modal-title" id="m_pedido_titulo">Pedido de Atencion</h4> -->
-            </div>
-            <div class="modal-body" id="modal-pedido-body">
-                <center>
-                    <h3 id="m_pedido_titulo">Pedido de Atencion</h3>
-                    <hr>
-                </center>  
-                <p id="m-pedido-cliente">Cliente : xxx</p>
-                <p>Mesa : ???</p>
-                <hr class="hr-text">
-                <h4>Orden : </h4>
-                <hr class="hr-text">
-                <div id="m-pedido-orden"></div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" onclick="PRINT_MD('modal-pedido-body')"><span class="fa fa-print"> </span>Imprimir</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script type="text/javascript">
     document.addEventListener('DOMContent', function(){
@@ -148,7 +121,7 @@
 
     });
 
-    function ModalPRINT(id,modal){
+    function FacturaImprimir(){
         const host = location.hostname;
         const port = (location.port=="") ? ':80' : port=":"+location.port;
         const url = "http://"+host+port+"/ventas_royale/";
@@ -201,9 +174,7 @@
     }
 </script>
 <style>
-    .hr-text {
-        border-top: 1px dashed #8c8b8b;
-    }
+    
     .xs{
         text-align:right;
     }

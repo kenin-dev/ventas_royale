@@ -50,14 +50,14 @@
                                 <?php if (!empty($ventas)): ?>
                                     <?php foreach($ventas as $venta):?>
                                         <tr>
-                                            <td><?php echo $venta->id;?></td>
+                                            <td><?php echo $venta->ven_id;?></td>
                                             <td><?php echo $venta->nombre;?></td>
                                             <td><?php echo $venta->tipocomprobante;?></td>
                                             <td><?php echo $venta->num_documento;?></td>
-                                            <td><?php echo $venta->fecha;?></td>
-                                            <td><?php echo $venta->total;?></td>
+                                            <td><?php echo $venta->ven_fecha;?></td>
+                                            <td><?php echo $venta->ven_total;?></td>
                                             <td>
-                                                <button type="button" class="btn btn-info btn-view-venta" value="<?php echo $venta->id;?>" data-toggle="modal" data-target="#modal-default"><span class="fa fa-search"></span></button>
+                                                <button type="button" class="btn btn-info btn-view-venta" value="<?php echo $venta->ven_id;?>" data-toggle="modal" data-target="#modal-default"><span class="fa fa-search"></span></button>
                                             </td>
                                         </tr>
                                     <?php endforeach;?>
