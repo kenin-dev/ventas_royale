@@ -33,7 +33,7 @@
                                     <select name="tipo_consumo" class="form-control" required>
                                         <option value="" selected disabled hidden>Seleccionar</option>
                                         <option value="presencial">Presencial</option>
-                                        <option value="deliveri">Deliveri</option>
+                                        <option value="delivery">delivery</option>
                                     </select>
                                 </div>    
                                 <div class="col-md-4" name="div_destino">
@@ -225,7 +225,7 @@
                     });
 
                     break;
-                case 'deliveri':
+                case 'delivery':
                     var input = document.createElement('input');
                     input.setAttribute('name', 'destino');
                     input.setAttribute('type', 'text');

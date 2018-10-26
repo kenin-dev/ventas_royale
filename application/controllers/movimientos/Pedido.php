@@ -108,6 +108,31 @@ class Pedido extends CI_Controller {
 
 	}
 
+	public function editar(){
+		$id = $this->input->post('id');
+		$tipo_consumo = $this->input->post('tipo_consumo');
+		$destino = $this->input->post('destino');
+
+		if (count($this->Pedido_model->buscar_pedido($id)) > 0) {
+			$data = array(
+				'ped_tipo_consumo' => $tipo_consumo,
+				'ped_destino' => $destino
+			);
+
+			$editar = $this->Pedido_model->actualizar_consumo_destino($id,$data);
+			if ($editar > 0) {
+				$this->session->set_flashdata('correcto', 'Pedido modificado correctamente!');
+			}else{
+				$this->session->set_flashdata('error', 'el proceso edicion no se completo.!');
+
+			}
+			redirect('movimientos/pedido/listar','refresh');
+
+		}else{
+			echo "pedido no encontrado";
+		}
+	}
+
 	public function pedido_rest(){
 		$id_pedido = $this->input->post('pedido');
 		$info = $this->Pedido_model->consultar_pedidos_avanzados($id_pedido);

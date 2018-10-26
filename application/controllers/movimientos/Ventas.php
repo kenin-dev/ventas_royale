@@ -307,7 +307,7 @@ class Ventas extends CI_Controller {
     	$id_pedido = $this->input->post('id_pedido');
     	$id_cliente = $this->input->post("cliente_id");
 		$id_usuario = $this->session->userdata("id");
-    	$fecha = date("Y-m-d H:i:s");
+    	$fecha = date("Y-m-d");
     	$igv = $this->input->post('igv');
     	$descuento = $this->input->post('descuento');
     	$total = $this->input->post('total');

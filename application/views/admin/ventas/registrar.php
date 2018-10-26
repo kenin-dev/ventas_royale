@@ -99,9 +99,9 @@
                             <div class="col-md-1">
                                 <label for="">&nbsp;</label>
                                 <br>
-                                <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#modal-default" ><span class="fa fa-search"></span> Seleccionar</button>
+                                <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#modal-default" ><span class="fa fa-search"></span> Buscar</button>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-2" hidden>
                                 <label for="">id</label>
                                 <input type="text" class="form-control" name='cliente_id' readonly required>
                             </div>
@@ -118,7 +118,7 @@
                             <hr>
                             <div class="col-md-4">
                                 <label for="">Recibido ( $ )</label>
-                                <input type="number" class="form-control" name='recibido' onkeyup=" calcular_importe()" required>
+                                <input type="text" class="form-control" name='recibido' onkeyup=" calcular_importe()" required>
                             </div>
                             <div class="col-md-4">
                                 <label for="">Total a devolver ( $ )</label>
@@ -134,6 +134,7 @@
                         </div>
 
                     </form>
+                    <button id="x-fox">Fox</button>
                 </div>
             </div>
         </div>
@@ -248,11 +249,8 @@
                     <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">Cerrar</button>
                 </div>
             </form>
-            
         </div>
-        <!-- /.modal-content -->
     </div>
-    <!-- /.modal-dialog -->
 </div>
 <script>
     document.addEventListener('DOMContentLoaded' , function(){
@@ -263,16 +261,36 @@
         },false);
 
         document.querySelector('#form_venta_registro').addEventListener('submit', function(event){
-
             if (document.querySelector('[name=cliente_id]').value == '') {
                 event.preventDefault();
                 alert("seleccione el cliente");
+            }
+
+            var recibido_evl = document.querySelector('[name=recibido]');
+            var total_evl = document.querySelector('[name=total]');
+            if (isNaN(recibido_evl.value)) {
+                event.preventDefault();
+                alert("Ingrese una cantidad valida");
+                recibido_evl.value = '';
+            }
+
+            if (parseFloat(recibido_evl.value) < parseFloat(total_evl.value)) {
+                event.preventDefault();
+                alert("El monto recibido debe ser mayor o igual al total");
             }
 
         }, false);
 
     }, true);
 
+    // 
+    document.querySelector('#x-fox').addEventListener('click', function(){
+        var test = document.querySelector('[name=igv]').value;
+        alert(parseFloat(test))
+
+    }, false);
+
+    // 
     function seleccion_cliente(e){
         var elemento = e.target;
         var padre = elemento.parentElement.parentElement.children;
@@ -293,8 +311,6 @@
         var cantidad = data[1];
         var igv = data[2];
         var serie = data[3];
-        
-        // document.querySelector('[name=tipo_comprobante]').value = id;
 
         document.querySelector('[name=numero]').value = generarnumero(cantidad);
         document.querySelector('[name=igv]').value = igv;
@@ -304,8 +320,8 @@
     }
 
     function calcular_descuentos(){
-        var subtotal = document.querySelector('[name=subtotal]').value;  
-        var igv = document.querySelector('[name=igv]').value;
+        var subtotal = parseFloat(document.querySelector('[name=subtotal]').value);  
+        var igv = parseFloat(document.querySelector('[name=igv]').value);
         var descuento = ((subtotal/100)*igv).toFixed(2);
         var total = (parseFloat(subtotal) + parseFloat(descuento)).toFixed(2);
         document.querySelector('[name=descuento]').value = descuento;

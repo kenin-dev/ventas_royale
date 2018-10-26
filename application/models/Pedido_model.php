@@ -28,15 +28,11 @@ class Pedido_model extends CI_Model {
 	}
 
 	public function eliminar_pedido($id){
-		// $this->db->where('ped_id', $id);
-		// $this->db->delete('pedido');
 		$sql = "delete from pedido where ped_id='$id'";
 		$eliminar = $this->db->query($sql);
 		return $eliminar;
 	}
 	public function eliminar_detalle_pedido($id){
-		// $this->db->where('pedido_id', $id);
-		// $this->db->delete('detalle_pedido');
 		$sql = "delete from detalle_pedido where pedido_id='$id'";
 		$eliminar = $this->db->query($sql);
 		return $eliminar;
@@ -52,12 +48,14 @@ class Pedido_model extends CI_Model {
 		return $pedido->row();
 	}
 
+	public function actualizar_consumo_destino($id,$data){
+		$this->db->where("ped_id",$id);
+		$this->db->update("pedido",$data);
+		return $this->db->affected_rows();
+	}
+
 	public function FinalizarPedido($id){
 		$sql = "UPDATE pedido p set p.ped_estado='finalizado' WHERE p.ped_id='$id'";
-		// $update = $this->db->query($sql);
-		// return $update;
-		// $this->db->where("id",$id);
-		// $this->db->update("ped_estado",'finalizado');
 		if ($this->db->query($sql)) {
 			return 1;
 		}else{

@@ -70,6 +70,7 @@
                                                     Facturacion
                                             </a>
                                             <a onclick='eliminar(event)' href="<?php echo base_url()?>movimientos/pedido/eliminar/<?php echo $pedido->ped_id;?>" class="btn btn-danger">Eliminar</a>
+                                            <button title="editar" class="btn btn-warning" onclick="editar(event)">Editar destino&nbsp;<span class="fa fa-pencil"></span></button>
                                         </td>
                                             
                                     </tr>
@@ -111,7 +112,116 @@
         </div>
     </div>
 </div>
-<script>
+
+<div class="modal fade" id="modal-editar">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="modal-editar-titulo">Pedido #105</h4>
+            </div>
+            <div class="modal-body" style="font-family: 'Roboto Mono';">
+                <form action="<?= base_url()?>movimientos/pedido/editar" method="POST" autocomplete="off">
+                    <div class="col-md-12">
+                        <p>Editar Destino: </p>
+                        <hr>
+                        <div class="form-group col-md-12">
+                            <label for="">Pedido</label>
+                            <input type="text" name="id" class="form-control" style="font-size:20px;text-align:center;" readonly>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="">Tipo de Consumo</label>
+                            <select name="tipo_consumo" class="form-control">
+                                <!-- <option disabled hidden></option> -->
+                                <option value="presencial">Presencial</option>
+                                <option value="delivery">Delivery</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-8" name="editar_div_destino">
+                            <label for="">Nuevo Destino</label><!-- 
+                            <input type="text" class="form-control" name="editar-nuevo_destino"> -->
+                        </div>
+
+                    </div>
+                    <div class="col-md-12 text-center">
+                        <hr>    
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                        <button class="btn btn-success" type="submit">
+                            Guardar cambios&nbsp;<span class="fa fa-check"></span>
+                        </button>
+                    </div>
+                   
+                </form>
+            </div>
+            <div class="modal-footer">
+               
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    const get_query = document.querySelector.bind(document);
+
+    document.querySelector('[name=tipo_consumo]').addEventListener('change', function(){
+        consumo_destino(this.value);
+    }, false);
+
+    function editar(e){            
+        var elemento = e.target.parentElement.parentElement.children;
+        consumo_destino(elemento[2].textContent);
+        get_query('[name=id]').value = elemento[0].textContent;
+        get_query('[name=tipo_consumo]').value = elemento[2].textContent;
+        get_query('[name=destino]').value = elemento[3].textContent;
+        $("#modal-editar").modal();
+    }
+
+    function consumo_destino(valor){
+        var origen = base_url+'mantenimiento/mesa/get_mesas_rest';
+        const div_destino = get_query('[name=editar_div_destino]');
+        if (document.querySelector('[name=destino]')) {
+            let dest = get_query('[name=destino]');
+            div_destino.removeChild(dest);
+        }
+
+        switch (valor) {
+            case 'presencial':
+                var list = document.createElement('select');
+                list.setAttribute('name', 'destino');
+                list.setAttribute('placeholder', 'seleccione la mesa');
+                list.setAttribute('required', 'required');
+                list.classList.add('form-control');
+                div_destino.appendChild(list);
+                    
+                $.ajax({
+                    url: origen,
+                    type: 'POST',
+                    data: {},
+                    success: function(resp){
+                        var data = JSON.parse(resp);
+                        for (var i = 0; i < data.length; i++) {
+                            var option = document.createElement('option');
+                            option.setAttribute('value', data[i]['mesa_numero']);
+                            option.text = 'Mesa '+data[i]['mesa_numero']+' - '+data[i]['mesa_estado'];
+                        list.appendChild(option);
+                            }
+                    }
+                });
+                break;
+            case 'delivery':
+                var input = document.createElement('input');
+                input.setAttribute('name', 'destino');
+                input.setAttribute('type', 'text');
+                input.setAttribute('required', 'required');
+                input.setAttribute('placeholder', 'ingrese la direccion del destino');
+                input.classList.add('form-control');
+                div_destino.appendChild(input);
+                break;
+            default:
+                break;
+        }
+    }
+     
     function eliminar(e){
         var resp = confirm("Esta seguro que quiere eliminar este pedido?");
            if (resp==true) {
