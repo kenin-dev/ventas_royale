@@ -223,7 +223,7 @@ class Ventas extends CI_Controller {
 	}
 
 	public function view(){
-		$idventa = $this->input->post("id");
+		$idventa = $this->input->get("id");
 		$data = array(
 			"venta" => $this->Ventas_model->getVenta($idventa),
 			"detalles" =>$this->Ventas_model->getDetalle($idventa)

@@ -32,6 +32,12 @@ class Ventas_model extends CI_Model {
 		}
 	}
 
+	public function getVentasActual($fecha){
+		$sql = "SELECT v.ven_id,concat(cl.nombre,' ',cl.ape_paterno,' ',cl.ape_materno) as 'cliente',v.ven_fecha,v.ven_igv,pd.ped_tipo_consumo,pd.ped_subtotal,v.ven_igv,v.ven_total,tc.nombre as 'comprobante' FROM ventas v INNER JOIN clientes cl ON cl.id = v.cliente_id INNER JOIN pedido pd ON pd.ped_id = v.pedido_id INNER JOIN tipo_comprobante tc ON tc.id = v.tipo_comprobante_id WHERE v.ven_fecha = '$fecha'";
+		$resultado = $this->db->query($sql);
+		return $resultado;
+	}
+
 	public function getVenta($id){
 		$this->db->select("v.*,c.nombre,c.direccion,c.telefono,c.num_documento as documento,tc.nombre as tipocomprobante");
 		$this->db->from("ventas v");
@@ -121,11 +127,20 @@ class Ventas_model extends CI_Model {
 	}
         
     public function totalVentaDia($fecha) {
-        $query = $this->db->query("CALL sp_TotalVentasDia('$fecha')");
-        $result = $query->result();
-//      $query->next_result();
-		$query->free_result();
-        return $result;
+        // $query = $this->db->query("CALL sp_TotalVentasDia('$fecha')");
+        $sql = "SELECT v.ven_id,ct.nombre as 'categoria', p.nombre 'Nombre'
+		, p.precio 'Precio', SUM(dp.dp_cantidad) 'Cantidad', dp.dp_importe 'SubTotal',
+		v.ven_igv 'Igv',SUM(v.ven_total) as 'Total' FROM ventas v
+		INNER JOIN pedido pd ON v.pedido_id = pd.ped_id
+		INNER JOIN detalle_pedido dp ON pd.ped_id = dp.pedido_id
+		INNER JOIN productos p ON dp.producto_id = p.id
+		INNER JOIN categorias ct ON p.categoria_id = ct.id
+		WHERE v.ven_fecha = '$fecha'
+		GROUP BY v.ven_id, dp.producto_id,ct.id
+		HAVING v.ven_id";
+
+        $result = $this->db->query($sql);
+        return $result->result();
     }
 
     public function delete($id){

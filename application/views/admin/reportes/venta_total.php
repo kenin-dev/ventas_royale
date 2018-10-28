@@ -8,7 +8,7 @@
             <div class="panel-body">
                 <div class="col-md-12">
                     
-                    <form action="<?= base_url() .'reportes/ventatotal' ?>" method="POST">
+                    <form action="<?= base_url() .'reportes/ventatotal' ?>" method="GET">
                         <div class="col-md-4">
                             <label for="">Fecha</label>
                             <input type="date" name="fecha" id="fecha" class="form-control">
@@ -40,14 +40,14 @@
                     <ul class="nav nav-tabs" role="tablist">
                         <li role="presentation" class="active">
                             <a href="#productos" aria-controls="productos" role="tab" data-toggle="tab">
-                                <b>Productos Vendidos</b>
+                                <b>Productos Vendidos&nbsp; <?= $fecha; ?> </b>
                             </a>
                         </li>
-                        <li role="presentation">
+                        <!-- <li role="presentation">
                             <a href="#ventas" aria-controls="ventas" role="tab" data-toggle="tab">
                                 <b>Ventas Realizadas</b>
                             </a>
-                        </li>
+                        </li> -->
                     </ul>
 
                     <div class="tab-content">
@@ -65,12 +65,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach($ventas as $venta): ?>
+                                    <?php foreach($productos as $producto): ?>
                                     <tr>
-                                        <td rowspan="1"><?= $venta->categoria.' - '.$venta->Nombre; ?></td>
-                                        <td rowspan="1"><?= $venta->Cantidad ?></td>
-                                        <td><?= $venta->Precio ?></td>
-                                        <td><?= $venta->SubTotal ?></td>
+                                        <td rowspan="1"><?= $producto->categoria.' - '.$producto->Nombre; ?></td>
+                                        <td rowspan="1"><?= $producto->Cantidad ?></td>
+                                        <td><?= $producto->Precio ?></td>
+                                        <td class='prod_subtotal'><?= $producto->SubTotal ?></td>
                                     </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -95,8 +95,12 @@
     }, true);
 
     function CalculoProductos(){
-        var prod_lista = document.querySelector('#tabla_productos tbody');
+        var prod_lista = document.querySelectorAll('#tabla_productos tbody tr td.prod_subtotal');
         var prod_total = 0;
-        console.log(prod_lista[0])
+        for (var i = 0; i < prod_lista.length; i++) {
+            prod_total = parseFloat(prod_total)+parseFloat(prod_lista[i].textContent);
+        }
+        // console.log(prod_lista.length)
+        document.querySelector("#prod_importe_total").innerHTML = prod_total;
     }
 </script>
