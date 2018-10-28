@@ -12,6 +12,8 @@
                     <div class="col-md-12 ">
                         <a href="<?php echo base_url();?>movimientos/pedido/nuevo" class="btn btn-warning">Nuevo Pedido&nbsp;
                         <span class="fa fa-plus center-block"></span></a>
+                        <a href="<?php echo base_url();?>movimientos/pedido/listar" class="btn btn-info">Lista de Pedidos&nbsp;
+                        <span class="fa fa-list center-block"></span></a>
                     </div>
                 </div>
                 <hr>

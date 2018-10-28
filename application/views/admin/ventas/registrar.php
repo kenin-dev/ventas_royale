@@ -134,7 +134,6 @@
                         </div>
 
                     </form>
-                    <button id="x-fox">Fox</button>
                 </div>
             </div>
         </div>
@@ -151,7 +150,7 @@
             <div class="modal-body">
                 <button class="btn btn-warning" type="button" data-toggle="modal" data-dismiss="modal" data-target="#modal-registro-cliente" ><span class="fa fa-plus"></span> Agregar Nuevo</button>
                 <hr>
-                <table class="table table-bordered table-striped table-hover">
+                <table id="example1" class="table table-bordered table-striped table-hover">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -283,14 +282,6 @@
 
     }, true);
 
-    // 
-    document.querySelector('#x-fox').addEventListener('click', function(){
-        var test = document.querySelector('[name=igv]').value;
-        alert(parseFloat(test))
-
-    }, false);
-
-    // 
     function seleccion_cliente(e){
         var elemento = e.target;
         var padre = elemento.parentElement.parentElement.children;
