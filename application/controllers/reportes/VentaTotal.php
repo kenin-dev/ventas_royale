@@ -10,6 +10,7 @@ class VentaTotal extends CI_Controller {
         }
         $this->load->model("Ventas_model");
         $this->load->model("Pedido_model");
+        $this->load->model("Productos_model");
     }
     
     public function index() {
@@ -27,10 +28,14 @@ class VentaTotal extends CI_Controller {
         }
         // $productos = $this->Ventas_model->totalVentaDia($fecha);
         // $ventas = $this->Ventas_model->getVentasActual($fecha);
+        // $data = array(
+        //     'fecha' => $fecha,
+        //     'productos' => $this->Ventas_model->totalVentaDia($fecha),
+        //     // 'ventas' => $this->Ventas_model->getVentasActual($fecha)
+        // );
         $data = array(
+            'productos' => $this->Productos_model->get_productos_vendidos($fecha),
             'fecha' => $fecha,
-            'productos' => $this->Ventas_model->totalVentaDia($fecha),
-            // 'ventas' => $this->Ventas_model->getVentasActual($fecha)
         );
         $this->load->view("layouts/header");
         $this->load->view("layouts/aside");

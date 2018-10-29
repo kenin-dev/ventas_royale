@@ -218,7 +218,7 @@
                             for (var i = 0; i < data.length; i++) {
                                 var option = document.createElement('option');
                                 option.setAttribute('value', data[i]['mesa_numero']);
-                                option.text = 'Mesa '+data[i]['mesa_numero']+' - '+data[i]['mesa_estado'];
+                                option.text = 'Mesa '+data[i]['mesa_numero'];
                                 list.appendChild(option);
                             }
                         }

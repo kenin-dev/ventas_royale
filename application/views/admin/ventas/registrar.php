@@ -95,6 +95,7 @@
 
                         <div class="col-md-12">
                             <hr>
+
                             <p><b>Datos del cliente</b></p>
                             <div class="col-md-1">
                                 <label for="">&nbsp;</label>
@@ -116,6 +117,26 @@
                         </div>
                         <div class="col-md-12">
                             <hr>
+                            <p><b>Datos de la venta</b></p>
+                            <hr>
+                            <div class="col-md-2">
+                                <label for="">Fecha de Registro</label>
+                                <input type="date" class="form-control" name="fecha" readonly>
+                                 <script>
+                                    class fecha{
+                                        getFecha(){
+                                            var d = new Date();
+                                            var year  = d.getFullYear();
+                                            var fake_m = d.getMonth() + 1;
+                                            var month = ( fake_m > 9 ) ? fake_m : '0'+fake_m;
+                                            var day   = (d.getDate()>9) ? d.getDate() : '0'+d.getDate();
+                                            return year+'-'+month+'-'+day;
+                                        }
+                                    }
+                                    var f = new fecha();
+                                    document.querySelector("[name=fecha]").defaultValue = f.getFecha();
+                                </script>
+                            </div>
                             <div class="col-md-4">
                                 <label for="">Recibido ( $ )</label>
                                 <input type="text" class="form-control" name='recibido' onkeyup=" calcular_importe()" required>

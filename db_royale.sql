@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 19-10-2018 a las 01:37:21
+-- Tiempo de generación: 29-10-2018 a las 06:26:25
 -- Versión del servidor: 10.1.26-MariaDB
 -- Versión de PHP: 7.1.8
 
@@ -53,6 +53,9 @@ INNER JOIN productos pr ON dp.producto_id = pr.id
 INNER JOIN categorias ct ON pr.categoria_id = ct.id
 WHERE p.ped_id = _id$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `pa_ventas_dia` (IN `_fecha` DATE)  NO SQL
+SELECT v.ven_id,concat(cl.nombre,' ',cl.ape_paterno,' ',cl.ape_materno) as 'cliente',v.ven_fecha,v.ven_igv,pd.ped_tipo_consumo,pd.ped_subtotal,v.ven_igv,v.ven_total,tc.nombre as 'comprobante' FROM ventas v INNER JOIN clientes cl ON cl.id = v.cliente_id INNER JOIN pedido pd ON pd.ped_id = v.pedido_id INNER JOIN tipo_comprobante tc ON tc.id = v.tipo_comprobante_id WHERE v.ven_fecha = _fecha$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `pa_venta_info` (IN `_venta` INT)  NO SQL
 SELECT v.ven_id,v.ven_fecha,pd.ped_subtotal,v.ven_total, pd.ped_tipo_consumo,pd.ped_destino,pr.abreviatura,pr.nombre as 'prod_nombre',pr.precio as 'prod_precio',ct.nombre as 'cat_nombre',ct.abreviatura as 'cat_abrev',dp.dp_cantidad,dp.dp_importe,dp.dp_detalle,
 concat(cl.nombre,' ',cl.ape_paterno,'',cl.ape_materno) as 'cli_nombres',concat(us.nombres,' ',us.apellidos) as 'usu_nombres'
@@ -66,14 +69,15 @@ INNER JOIN usuarios us ON us.id = v.usuario_id
 WHERE v.ven_id = _venta$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_TotalVentasDia` (IN `fechaIn` DATE)  BEGIN
-SELECT SUM(v.ven_total) as 'Total', SUM(dp.dp_cantidad) 'Cantidad', p.nombre 'Nombre'
-, p.precio 'Precio', (dp.dp_cantidad * CAST( p.precio AS DECIMAL(18, 2))) 'SubTotal',
-v.ven_igv 'Igv' FROM ventas v
+SELECT v.ven_id,ct.nombre as 'categoria', p.nombre 'Nombre'
+, p.precio 'Precio', SUM(dp.dp_cantidad) 'Cantidad', dp.dp_importe 'SubTotal',
+v.ven_igv 'Igv',SUM(v.ven_total) as 'Total' FROM ventas v
 INNER JOIN pedido pd ON v.pedido_id = pd.ped_id
 INNER JOIN detalle_pedido dp ON pd.ped_id = dp.pedido_id
 INNER JOIN productos p ON dp.producto_id = p.id
+INNER JOIN categorias ct ON p.categoria_id = ct.id
 WHERE v.ven_fecha = fechaIn
-GROUP BY v.ven_id, dp.producto_id
+GROUP BY v.ven_id, dp.producto_id,ct.id
 HAVING v.ven_id;
 END$$
 
@@ -159,12 +163,28 @@ CREATE TABLE `detalle_pedido` (
 --
 
 INSERT INTO `detalle_pedido` (`dp_id`, `pedido_id`, `producto_id`, `dp_precio`, `dp_cantidad`, `dp_importe`, `dp_detalle`) VALUES
-(6, 3, 23, '7.00', 1, '7.00', 'sin papas'),
-(7, 3, 36, '4.00', 5, '20.00', 'helado'),
-(8, 3, 43, '3.00', 1, '3.00', 'no tan concentrado'),
-(13, 6, 24, '8.00', 2, '16.00', ''),
-(14, 7, 30, '10.00', 3, '30.00', ''),
-(15, 7, 6, '9.00', 1, '9.00', 'sin ensalada');
+(24, 11, 16, '8.00', 2, '16.00', 'con extra ensalada'),
+(25, 11, 33, '3.00', 2, '6.00', ''),
+(26, 12, 7, '8.50', 1, '8.50', ''),
+(27, 12, 31, '10.00', 1, '10.00', ''),
+(28, 13, 18, '9.00', 1, '9.00', ''),
+(29, 13, 35, '4.00', 1, '4.00', ''),
+(30, 13, 44, '3.00', 1, '3.00', ''),
+(31, 14, 18, '9.00', 1, '9.00', ''),
+(32, 14, 26, '9.00', 1, '9.00', ''),
+(33, 15, 5, '9.00', 3, '27.00', ''),
+(34, 16, 31, '10.00', 1, '10.00', ''),
+(35, 16, 18, '9.00', 2, '18.00', ''),
+(36, 16, 44, '3.00', 1, '3.00', ''),
+(37, 17, 2, '7.00', 3, '21.00', ''),
+(38, 17, 25, '7.50', 2, '15.00', ''),
+(39, 17, 32, '3.00', 4, '12.00', ''),
+(40, 18, 10, '8.50', 3, '25.50', ''),
+(41, 19, 7, '8.50', 4, '34.00', ''),
+(42, 19, 7, '8.50', 1, '8.50', ''),
+(43, 20, 25, '7.50', 2, '15.00', ''),
+(44, 21, 6, '9.00', 2, '18.00', ''),
+(45, 21, 26, '9.00', 3, '27.00', '');
 
 -- --------------------------------------------------------
 
@@ -223,11 +243,10 @@ CREATE TABLE `mesa` (
 --
 
 INSERT INTO `mesa` (`mesa_id`, `mesa_numero`, `mesa_descripcion`, `mesa_estado`) VALUES
-(1, 'Mesa 01', 'Mesa para 4', 'libre'),
+(1, 'Mesa 01', 'Mesa para 6', 'activo'),
 (2, 'Mesa 02', 'Mesa Para 2', 'libre'),
-(3, 'Mesa 03', 'Mesa para 1', 'libre'),
-(4, 'Mesa 04', 'Mesa para 2', 'libre'),
-(5, 'Mesa 05', 'barra de bancas', 'libre');
+(3, 'Mesa 03', 'Mesa para 4', 'activo'),
+(4, 'Mesa 04', 'Mesa para 4', 'activo');
 
 -- --------------------------------------------------------
 
@@ -249,9 +268,17 @@ CREATE TABLE `pedido` (
 --
 
 INSERT INTO `pedido` (`ped_id`, `ped_fecha`, `ped_subtotal`, `ped_tipo_consumo`, `ped_destino`, `ped_estado`) VALUES
-(3, '2018-10-17', '30.00', 'presencial', 'Mesa 04', 'Finalizado'),
-(6, '2018-10-18', '16.00', 'presencial', 'Mesa 01', 'finalizado'),
-(7, '2018-10-18', '39.00', 'deliveri', 'urb. 21 de abril mz-a lote-9', 'pendiente');
+(11, '2018-10-26', '22.00', 'presencial', 'Mesa 05', 'finalizado'),
+(12, '2018-10-26', '18.50', 'presencial', 'Mesa 03', 'finalizado'),
+(13, '2018-10-26', '16.00', 'delivery', 'Cambio puente.', 'finalizado'),
+(14, '2018-10-27', '18.00', 'presencial', 'Mesa 05', 'finalizado'),
+(15, '2018-10-27', '27.00', 'presencial', 'Mesa 02', 'finalizado'),
+(16, '2018-10-27', '31.00', 'presencial', 'Mesa 01', 'finalizado'),
+(17, '2018-10-27', '48.00', 'delivery', 'Urb. 15 de enero', 'finalizado'),
+(18, '2018-10-28', '25.50', 'presencial', 'Mesa 02', 'finalizado'),
+(19, '2018-10-28', '42.50', 'delivery', 'Jr union', 'finalizado'),
+(20, '2018-10-28', '15.00', 'presencial', 'Mesa 05', 'finalizado'),
+(21, '2018-10-28', '45.00', 'presencial', 'Mesa 05', 'finalizado');
 
 -- --------------------------------------------------------
 
@@ -424,9 +451,9 @@ CREATE TABLE `tipo_comprobante` (
 --
 
 INSERT INTO `tipo_comprobante` (`id`, `nombre`, `cantidad`, `igv`, `serie`) VALUES
-(1, 'Factura', 9, 18, 1),
-(2, 'Boleta', 25, 0, 1),
-(3, 'Nota de Venta', 15, 0, 1);
+(1, 'Factura', 11, 18, 1),
+(2, 'Boleta', 36, 0, 1),
+(3, 'Nota de Venta', 16, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -501,8 +528,41 @@ CREATE TABLE `ventas` (
 --
 
 INSERT INTO `ventas` (`ven_id`, `pedido_id`, `cliente_id`, `usuario_id`, `ven_fecha`, `ven_igv`, `ven_descuento`, `ven_total`, `tipo_comprobante_id`, `num_documento`, `serie`, `ven_monto_recibido`, `ven_monto_devuelto`) VALUES
-(5, 3, 4, 1, '2018-10-17', 0, '0.00', '30.00', 2, '000024', '1', '40.00', '10.00'),
-(6, 6, 3, 1, '2018-10-18', 0, '0.00', '16.00', 2, '000025', '1', '50.00', '34.00');
+(10, 11, 1, 1, '2018-10-25', 0, '0.00', '22.00', 2, '000029', '1', '10.00', '-12.00'),
+(11, 12, 6, 1, '2018-10-26', 0, '0.00', '18.50', 2, '000030', '1', '18.50', '0.00'),
+(12, 13, 5, 1, '2018-10-28', 18, '2.88', '18.88', 1, '000010', '1', '100.00', '81.12'),
+(13, 16, 1, 1, '2018-10-28', 0, '0.00', '31.00', 2, '000031', '1', '50.00', '19.00'),
+(14, 17, 6, 1, '2018-10-28', 0, '0.00', '48.00', 2, '000032', '1', '48.00', '0.00'),
+(15, 18, 7, 1, '2018-10-28', 0, '0.00', '25.50', 2, '000033', '1', '25.50', '0.00'),
+(16, 19, 7, 1, '2018-10-28', 0, '0.00', '42.50', 2, '000034', '1', '50.00', '7.50'),
+(17, 15, 7, 1, '2018-10-28', 0, '0.00', '27.00', 2, '000035', '1', '100.00', '73.00'),
+(18, 14, 6, 1, '2018-10-28', 0, '0.00', '18.00', 3, '000016', '1', '20.00', '2.00'),
+(19, 20, 1, 1, '2018-10-28', 0, '0.00', '15.00', 2, '000036', '1', '15.00', '0.00'),
+(20, 21, 7, 1, '2018-10-28', 18, '8.10', '53.10', 1, '000011', '1', '100.00', '46.90');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura Stand-in para la vista `vista_productos_vendidos`
+-- (Véase abajo para la vista actual)
+--
+CREATE TABLE `vista_productos_vendidos` (
+`fecha` date
+,`categoria` varchar(45)
+,`producto` varchar(45)
+,`precio` varchar(45)
+,`cantidad` int(3)
+,`importe` decimal(8,2)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura para la vista `vista_productos_vendidos`
+--
+DROP TABLE IF EXISTS `vista_productos_vendidos`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vista_productos_vendidos`  AS  select `v`.`ven_fecha` AS `fecha`,`ct`.`nombre` AS `categoria`,`pr`.`nombre` AS `producto`,`pr`.`precio` AS `precio`,`dp`.`dp_cantidad` AS `cantidad`,`dp`.`dp_importe` AS `importe` from ((((`ventas` `v` join `pedido` `pd` on((`v`.`pedido_id` = `pd`.`ped_id`))) join `detalle_pedido` `dp` on((`pd`.`ped_id` = `dp`.`pedido_id`))) join `productos` `pr` on((`dp`.`producto_id` = `pr`.`id`))) join `categorias` `ct` on((`ct`.`id` = `pr`.`categoria_id`))) order by `v`.`ven_fecha` ;
 
 --
 -- Índices para tablas volcadas
@@ -626,7 +686,7 @@ ALTER TABLE `ventas`
 -- AUTO_INCREMENT de la tabla `categorias`
 --
 ALTER TABLE `categorias`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT de la tabla `clientes`
 --
@@ -636,7 +696,7 @@ ALTER TABLE `clientes`
 -- AUTO_INCREMENT de la tabla `detalle_pedido`
 --
 ALTER TABLE `detalle_pedido`
-  MODIFY `dp_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `dp_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 --
 -- AUTO_INCREMENT de la tabla `empleado`
 --
@@ -651,12 +711,12 @@ ALTER TABLE `menus`
 -- AUTO_INCREMENT de la tabla `mesa`
 --
 ALTER TABLE `mesa`
-  MODIFY `mesa_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `mesa_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT de la tabla `pedido`
 --
 ALTER TABLE `pedido`
-  MODIFY `ped_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `ped_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 --
 -- AUTO_INCREMENT de la tabla `permisos`
 --
@@ -701,7 +761,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `ventas`
 --
 ALTER TABLE `ventas`
-  MODIFY `ven_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `ven_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 --
 -- Restricciones para tablas volcadas
 --

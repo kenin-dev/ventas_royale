@@ -39,4 +39,10 @@ class Productos_model extends CI_Model {
 		$resultado = $this->db->query($sql);
 		return $resultado->result();
 	}
+
+	public function get_productos_vendidos($fecha){
+		$sql = "SELECT pv.fecha,pv.categoria,pv.producto,pv.precio,SUM(pv.cantidad) as 'cantidad_total',(SUM(pv.cantidad)*pv.precio) as 'importe_total' FROM vista_productos_vendidos pv WHERE pv.fecha = '$fecha' GROUP BY pv.categoria,pv.producto ORDER BY pv.categoria ASC";
+		$resultado = $this->db->query($sql);
+		return $resultado->result();
+	}
 }

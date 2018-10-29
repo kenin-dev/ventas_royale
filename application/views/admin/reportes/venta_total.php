@@ -67,17 +67,17 @@
                                 <tbody>
                                     <?php foreach($productos as $producto): ?>
                                     <tr>
-                                        <td rowspan="1"><?= $producto->categoria.' - '.$producto->Nombre; ?></td>
-                                        <td rowspan="1"><?= $producto->Cantidad ?></td>
-                                        <td><?= $producto->Precio ?></td>
-                                        <td class='prod_subtotal'><?= $producto->SubTotal ?></td>
+                                        <td rowspan="1"><?= $producto->categoria.' - '.$producto->producto; ?></td>
+                                        <td rowspan="1"><?= $producto->cantidad_total; ?></td>
+                                        <td><?= $producto->precio ?></td>
+                                        <td class='prod_subtotal'><?= $producto->importe_total; ?></td>
                                     </tr>
                                     <?php endforeach; ?>
                                 </tbody>
                                 <tfoot>
                                     <tr class="info">
                                         <td colspan="3"><b>Total</b>&nbsp;</td>
-                                        <td><b id="prod_importe_total"></b></td>
+                                        <td><b id="prod_importe_total"></b>&nbsp;&nbsp;S/.</td>
                                     </tr>
                                 </tfoot>
                             </table>
