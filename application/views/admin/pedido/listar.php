@@ -2,7 +2,7 @@
     <section class="content-header">
         <h1>
         Pedidos
-        <small>Lista</small>
+        <small>[ Lista ]</small>
         </h1>
     </section>
     <section class="content">
@@ -59,18 +59,18 @@
                                         <td><?php echo $pedido->ped_destino;?></td>
                                         <td><?php echo $pedido->ped_subtotal;?></td>
                                         <td>
-                                            <button class="btn btn-primary" onclick="modal_imprimir(<?= $pedido->ped_id; ?>)">
+                                            <button title="imprimir" class="btn btn-primary" onclick="modal_imprimir(<?= $pedido->ped_id; ?>)">
                                                 <span class="fa fa-print">
                                                 </span>
                                                     Imprimir
                                             </button>
-                                            <a class="btn btn-success" href="<?= base_url();?>movimientos/ventas/registrar/<?= $pedido->ped_id;?>">
+                                            <a title="facturar" class="btn btn-success" href="<?= base_url();?>movimientos/ventas/registrar/<?= $pedido->ped_id;?>">
                                                 <span class="fa fa-file-invoice-dollar">
                                                 </span>
                                                     Facturacion
                                             </a>
-                                            <a onclick='eliminar(event)' href="<?php echo base_url()?>movimientos/pedido/eliminar/<?php echo $pedido->ped_id;?>" class="btn btn-danger">Eliminar</a>
-                                            <button title="editar" class="btn btn-warning" onclick="editar(event)">Editar destino&nbsp;<span class="fa fa-pencil"></span></button>
+                                            <a title="eliminar" onclick='eliminar(event)' href="<?php echo base_url()?>movimientos/pedido/eliminar/<?php echo $pedido->ped_id;?>" class="btn btn-danger">Eliminar</a>
+                                            <a href="<?= base_url()?>movimientos/pedido/editar/<?= $pedido->ped_id;?>" title="editar" class="btn btn-warning">Editar&nbsp;<span class="fa fa-pencil"></span></a>
                                         </td>
                                             
                                     </tr>
@@ -128,7 +128,7 @@
                         <hr>
                         <div class="form-group col-md-12">
                             <label for="">Pedido</label>
-                            <input type="text" name="id" class="form-control" style="font-size:20px;text-align:center;" readonly>
+                            <input type="text" name="id" class="form-control" readonly>
                         </div>
                         <div class="form-group col-md-4">
                             <label for="">Tipo de Consumo</label>

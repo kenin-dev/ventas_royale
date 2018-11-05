@@ -10,6 +10,7 @@ class Pedido extends CI_Controller {
 		}
 		$this->load->model("Pedido_model");
         $this->load->model('Categorias_model');
+        $this->load->model('Mesa_model');
 		// $this->load->model("Productos_model");
 	}
 
@@ -108,7 +109,35 @@ class Pedido extends CI_Controller {
 
 	}
 
-	public function editar(){
+	public function editar($id = null){
+		if (is_null($id)) {
+			echo "Especifique un pedido";
+		}else{
+			
+			$pedido = $this->Pedido_model->buscar_pedido($id);
+			if (count($pedido) > 0) {
+
+				$pedido_detalle = $this->Pedido_model->consultar_detalle_pedidos($id);
+				$mesas = $this->Mesa_model->getMesasTodas();
+				$data = array(
+					'pedido' => $pedido,
+					'detalle' => $pedido_detalle,
+					'mesa' => $mesas
+
+				);
+				$this->load->view("layouts/header");
+				$this->load->view("layouts/aside");
+				$this->load->view("admin/pedido/editar",$data);
+				$this->load->view("layouts/footer");
+
+			}else{
+				echo "Pedido no encontrado : ".$id;
+			}
+
+		}
+	}
+
+	public function actualizar(){
 		$id = $this->input->post('id');
 		$tipo_consumo = $this->input->post('tipo_consumo');
 		$destino = $this->input->post('destino');
@@ -119,7 +148,7 @@ class Pedido extends CI_Controller {
 				'ped_destino' => $destino
 			);
 
-			$editar = $this->Pedido_model->actualizar_consumo_destino($id,$data);
+			$editar = $this->Pedido_model->actualizar($id,$data);
 			if ($editar > 0) {
 				$this->session->set_flashdata('correcto', 'Pedido modificado correctamente!');
 			}else{
@@ -133,10 +162,49 @@ class Pedido extends CI_Controller {
 		}
 	}
 
+
+
+// Funciones Rest
+
 	public function pedido_rest(){
 		$id_pedido = $this->input->post('pedido');
 		$info = $this->Pedido_model->consultar_pedidos_avanzados($id_pedido);
 		echo json_encode($info);
 	}   
+
+	public function pedido_info_rest(){
+		$id = $this->input->post('id');
+		$pedido = $this->Pedido_model->buscar_pedido($id);
+		if (count($pedido) > 0) {
+			echo json_encode($pedido);
+		}else{
+			echo "false";
+		}
+	}
+
+	public function pedido_detalle_info_rest(){
+		$id = $this->input->post('id');
+		$pedido_detalle = $this->Pedido_model->consultar_detalle_pedidos($id);
+		echo json_encode($pedido_detalle);
+	}
+
+	public function actualizar_tipo_consumo_rest(){
+		$id = $this->input->post('id');
+		$tipo_consumo = $this->input->post('tipo');
+		$destino = $this->input->post('destino');
+		$data = array(
+			'ped_tipo_consumo' => $tipo_consumo,
+			'ped_destino' => $destino
+		);
+		$actualizar = $this->Pedido_model->actualizar($id,$data);
+
+		echo json_encode($actualizar);
+	}
+
+	public function eliminar_detalle_rest(){
+		$id = $this->input->post('id');
+		$eliminar = $this->Pedido_model->eliminar_pedido_producto($id);
+		echo json_encode($eliminar);
+	}
 
 }
