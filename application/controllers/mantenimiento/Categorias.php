@@ -122,4 +122,9 @@ class Categorias extends CI_Controller {
 		$this->Categorias_model->update($id,$data);
 		echo "mantenimiento/categorias";
 	}
+
+	public function list_rest(){
+		$categorias = $this->Categorias_model->getCategorias();
+		echo json_encode($categorias);
+	}
 }

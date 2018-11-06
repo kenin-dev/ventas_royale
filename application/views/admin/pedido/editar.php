@@ -94,7 +94,7 @@
                     <div class="col-md-3">
                         <label for="">&nbsp;</label>
                         <br>
-                        <button class="btn btn-warning">Agregar 
+                        <button onclick="cargar_modal_producto()" class="btn btn-warning">Agregar 
                             <span class="fa fa-plus"></span>
                         </button>
                     </div>
@@ -136,6 +136,66 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="modal-producto">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"><b>Agregar Producto</b></h4>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    
+                    <div class="col-md-6">
+                        <label for="">Categoria</label>
+                        <select name="select_categoria" class="form-control">
+                            <option disabled hidden>seleccionar</option>
+                        </select>
+                        <br>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="">Producto</label>
+                        <select name="select_producto" class="form-control">
+                        </select>
+                        <br>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="col-md-3">
+                        <label for="">Precio</label>
+                        <input type="text" class="form-control" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="">Cantidad</label>
+                        <input type="number" class="form-control" min="1" max="5" value="1">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="">Detalles</label>
+                        <input type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <hr>
+                    <div class="col-md-6 col-md-offset-2">
+                        <label for="">Importe Total</label>
+                        <input type="text" class="form-control" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="">&nbsp;</label>
+                        <br>
+                        <button class="btn btn-success">Agregar</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                    </div>   
+                </div>
+            </div>
+            <div class="modal-footer">
+               
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
     const get_id = document.getElementById.bind(document);
     const get_query = document.querySelector.bind(document);
@@ -157,14 +217,12 @@
         // });
     }, false);
 
+
+// TIPO CONSUMO - DESTINO
+
     document.querySelector('[name=tipo_consumo]').addEventListener('change', function(){
         cargar_nuevo_destino(this.value);
     }, false);
-
-    
-    // get_id('recargar-tconsumo').addEventListener('click', function(){
-    //     location.reload();
-    // }, false);
 
     get_id('guardar_tipo_consumo').addEventListener('click', function(){
 
@@ -181,7 +239,7 @@
     }, false);
 
 
-// TIPO CONSUMO - DESTINO
+
 
     function cargar_destino_actual(){
         const pedido = get_query('[name=id]').value;
@@ -296,8 +354,6 @@
 
     function cargar_productos_pedido(){
         const pedido = get_query('[name=id]').value;
-        // console.log(pedido)
-
         $.ajax({
             url: base_url+'movimientos/pedido/pedido_detalle_info_rest',
             method: 'POST',
@@ -334,11 +390,18 @@
         // console.log(elemento[0].textContent);
         var pregunta = confirm("¿seguro de remover producto?");
         if (pregunta) {
+            var subtotal_actual = parseFloat(get_query('[name=subtotal]').value);
+            var importe_producto = parseFloat(elemento[4].textContent); 
+            var nuevo_subtotal = parseFloat(subtotal_actual) - parseFloat(importe_producto);
+
             $.ajax({
                 url: base_url+'movimientos/pedido/eliminar_detalle_rest',
                 method: 'POST',
                 data: {
-                    id: dp_id
+                    id_pedido: get_query('[name=id]').value,
+                    id_detalle: dp_id,
+                    n_subtotal: nuevo_subtotal.toFixed(2)
+
                 },
                 success: function(resp){
                     // console.log(resp);
@@ -373,7 +436,81 @@
         }
 
     }
+
+    document.querySelector('[name=select_categoria]').addEventListener('change', function(){
+        // console.log(this.value);
+        cargar_productos(this.value);
+    }, false);
+
+
+    function cargar_modal_producto(){
+        $('#modal-producto').modal();
+        cargar_categorias();
+        cargar_productos(get_query('[name=select_categoria]').value);
+
+    }
+
+    function cargar_categorias(){
+        
+        $.ajax({
+            url: base_url+'mantenimiento/categorias/list_rest',
+            method: 'POST',
+            data: { },
+            success: function(resp){
+                // console.log(resp);
+                var categorias = JSON.parse(resp);
+                var cadena_cat = "";
+
+                if (categorias.length > 0) {
+                    cadena_cat += "<option value='' selected disabled hidden>Seleccionar</option>";
+                    for(cat in categorias){
+                        cadena_cat += "<option value='"+categorias[cat]['id']+"'>"+categorias[cat]['nombre']+"</option>";
+                    }
+                }else{
+                    cadena_cat += "<option >Sin datos</option>";
+                }
+                get_query('[name=select_categoria]').innerHTML = cadena_cat;
+            }
+        });
+
+    }
+
+    function cargar_productos(categoria_actual){
+        var cadena_prod = "";
+
+        if (categoria_actual != '') {
+            $.ajax({
+                url: base_url+'mantenimiento/productos/categoria_productos_rest',
+                method: 'POST',
+                data: {
+                    categoria : categoria_actual
+                },
+                success: function(resp){
+                    var producto = JSON.parse(resp);
+                    console.log(producto);
+                    if (producto.length > 0) {
+                        for(prod in producto){
+                            // console.log(producto[prod]['prod_nom']);
+                            cadena_prod += "<option value='"+producto[prod]['prod_id']+"-"+producto[prod]['prod_prec']+"'>";
+                            cadena_prod += producto[prod]['prod_nom']+' - ';
+                            cadena_prod += "<b>"+producto[prod]['prod_prec']+" S/</b>";
+                            cadena_prod += "</option>";
+                            get_query('[name=select_producto]').innerHTML = cadena_prod;
+                        }
+                    }else{
+                        cadena_prod += "<option>Sin Datos</option>";
+                        get_query('[name=select_producto]').innerHTML = cadena_prod;
+
+                    }
+                }
+            });
+        }else{
+            cadena_prod += "<option>--Seleccione una categoria--</option>";
+            get_query('[name=select_producto]').innerHTML = cadena_prod;
+        }
+    }
 </script>
+
 <style>
     .control-center {
        font-size: 18px;

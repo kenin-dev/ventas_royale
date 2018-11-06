@@ -202,9 +202,22 @@ class Pedido extends CI_Controller {
 	}
 
 	public function eliminar_detalle_rest(){
-		$id = $this->input->post('id');
-		$eliminar = $this->Pedido_model->eliminar_pedido_producto($id);
-		echo json_encode($eliminar);
+		$id_pedido  = $this->input->post('id_pedido'); 
+		$id_detalle = $this->input->post('id_detalle');
+		$subtotal   = $this->input->post('n_subtotal');
+		$data = array(
+			'ped_subtotal' => $subtotal
+		);
+		// echo $id_pedido.' '.$id_detalle.' '.$subtotal;
+
+		$eliminar = $this->Pedido_model->eliminar_pedido_producto($id_detalle);
+		if ($eliminar > 0) {
+			$actualizar_pedido = $this->Pedido_model->actualizar($id_pedido,$data);
+			echo json_encode($actualizar_pedido);
+		}else{
+			echo json_encode($eliminar);	
+		}
+		// echo json_encode($eliminar);
 	}
 
 }

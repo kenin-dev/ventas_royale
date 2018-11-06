@@ -21,6 +21,8 @@
     <!-- Theme style -->
     <link rel="stylesheet" href="<?php echo base_url();?>assets/template/dist/css/AdminLTE.css">
     <link rel="stylesheet" href="<?php echo base_url();?>assets/template/dist/css/iziToast.min.css">
+    <link rel="stylesheet" href="<?php echo base_url();?>assets/pace/pace.css">
+    <script src="<?php echo base_url();?>assets/pace/pace.js"></script>
     <!-- AdminLTE Skins. Choose a skin from the css/skins
     folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="<?php echo base_url();?>assets/template/dist/css/skins/_all-skins.min.css">
