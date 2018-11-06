@@ -1,88 +1,95 @@
 <div class="content-wrapper">
-    <section class="content-header">
-        <h1>
-        Pedidos
-        <small>[ Lista ]</small>
-        </h1>
-    </section>
-    <section class="content">
-        <div class="box box-solid">
-            <div class="box-body">
-                <div class="row">
-                    <div class="col-md-12 ">
-                        <a href="<?php echo base_url();?>movimientos/pedido/nuevo" class="btn btn-warning">Nuevo Pedido&nbsp;
-                        <span class="fa fa-plus center-block"></span></a>
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-md-12">
-                        <?php 
-                            if ($this->session->flashdata('correcto')) {
-                         ?>
-                            <div class="alert alert-success alert-dismissible" role="alert">
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <p><strong>Correcto : </strong><?php echo $this->session->flashdata('correcto'); ?></p>
+    <div class="content">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2>
+                Pedidos
+                <small>[ Lista ]</small>
+                </h2>
+            </div>
+            <div class="panel-body">
+                <section class="content">
+                    <div class="box box-solid">
+                        <div class="box-body">
+                            <div class="row">
+                                <div class="col-md-12 ">
+                                    <a href="<?php echo base_url();?>movimientos/pedido/nuevo" class="btn btn-warning">Nuevo Pedido&nbsp;
+                                    <span class="fa fa-plus center-block"></span></a>
+                                </div>
                             </div>
-                        <?php 
-                            }
-                         ?>
-                         <!--  -->
-                        <?php 
-                            if ($this->session->flashdata('error')) {
-                         ?>
-                            <div class="alert alert-danger alert-dismissible" role="alert">
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <p><strong>Error : </strong><?php echo $this->session->flashdata('error'); ?></p>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <?php 
+                                        if ($this->session->flashdata('correcto')) {
+                                     ?>
+                                        <div class="alert alert-success alert-dismissible" role="alert">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            <p><strong>Correcto : </strong><?php echo $this->session->flashdata('correcto'); ?></p>
+                                        </div>
+                                    <?php 
+                                        }
+                                     ?>
+                                     <!--  -->
+                                    <?php 
+                                        if ($this->session->flashdata('error')) {
+                                     ?>
+                                        <div class="alert alert-danger alert-dismissible" role="alert">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            <p><strong>Error : </strong><?php echo $this->session->flashdata('error'); ?></p>
+                                        </div>
+                                    <?php 
+                                        }
+                                     ?>
+                                    <table id="example1" class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Fecha</th>
+                                                <th>Tipo de consumo</th>                         
+                                                <th>Destino</th>
+                                                <th>subtotal</th>
+                                                <th>Opciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php if (!empty($pedidos)): ?>
+                                            <?php foreach($pedidos as $pedido):?>
+                                                <tr>
+                                                    <td><?php echo $pedido->ped_id;?></td>
+                                                    <td><?php echo $pedido->ped_fecha;?></td>
+                                                    <td><?php echo $pedido->ped_tipo_consumo;?></td>
+                                                    <td><?php echo $pedido->ped_destino;?></td>
+                                                    <td><?php echo $pedido->ped_subtotal;?></td>
+                                                    <td>
+                                                        <button title="imprimir" class="btn btn-primary" onclick="modal_imprimir(<?= $pedido->ped_id; ?>)">
+                                                            <span class="fa fa-print">
+                                                            </span>
+                                                                Imprimir
+                                                        </button>
+                                                        <a title="facturar" class="btn btn-success" href="<?= base_url();?>movimientos/ventas/registrar/<?= $pedido->ped_id;?>">
+                                                            <span class="fa fa-file-invoice-dollar">
+                                                            </span>
+                                                                Facturacion
+                                                        </a>
+                                                        <a title="eliminar" onclick='eliminar(event)' href="<?php echo base_url()?>movimientos/pedido/eliminar/<?php echo $pedido->ped_id;?>" class="btn btn-danger">Eliminar</a>
+                                                        <a href="<?= base_url()?>movimientos/pedido/editar/<?= $pedido->ped_id;?>" title="editar" class="btn btn-warning">Editar&nbsp;<span class="fa fa-pencil"></span></a>
+                                                    </td>
+                                                        
+                                                </tr>
+                                            <?php endforeach;?>
+                                        <?php endif ?>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                        <?php 
-                            }
-                         ?>
-                        <table id="example1" class="table table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Fecha</th>
-                                    <th>Tipo de consumo</th>                         
-                                    <th>Destino</th>
-                                    <th>subtotal</th>
-                                    <th>Opciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            <?php if (!empty($pedidos)): ?>
-                                <?php foreach($pedidos as $pedido):?>
-                                    <tr>
-                                        <td><?php echo $pedido->ped_id;?></td>
-                                        <td><?php echo $pedido->ped_fecha;?></td>
-                                        <td><?php echo $pedido->ped_tipo_consumo;?></td>
-                                        <td><?php echo $pedido->ped_destino;?></td>
-                                        <td><?php echo $pedido->ped_subtotal;?></td>
-                                        <td>
-                                            <button title="imprimir" class="btn btn-primary" onclick="modal_imprimir(<?= $pedido->ped_id; ?>)">
-                                                <span class="fa fa-print">
-                                                </span>
-                                                    Imprimir
-                                            </button>
-                                            <a title="facturar" class="btn btn-success" href="<?= base_url();?>movimientos/ventas/registrar/<?= $pedido->ped_id;?>">
-                                                <span class="fa fa-file-invoice-dollar">
-                                                </span>
-                                                    Facturacion
-                                            </a>
-                                            <a title="eliminar" onclick='eliminar(event)' href="<?php echo base_url()?>movimientos/pedido/eliminar/<?php echo $pedido->ped_id;?>" class="btn btn-danger">Eliminar</a>
-                                            <a href="<?= base_url()?>movimientos/pedido/editar/<?= $pedido->ped_id;?>" title="editar" class="btn btn-warning">Editar&nbsp;<span class="fa fa-pencil"></span></a>
-                                        </td>
-                                            
-                                    </tr>
-                                <?php endforeach;?>
-                            <?php endif ?>
-                            </tbody>
-                        </table>
+                        </div>
                     </div>
-                </div>
+                </section>
             </div>
         </div>
-    </section>
+    </div>
+   
 </div>
 
 <div class="modal fade" id="modal-pedido">

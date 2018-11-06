@@ -25,7 +25,7 @@
                             </div>
                             <div class="col-md-3">
                                 <label for="">Subtotal</label>
-                                <input type="text" class="form-control" name='subtotal' value="<?= $pedido->ped_subtotal;?>" readonly>
+                                <input type="text" class="form-control md-import" name='subtotal' value="<?= $pedido->ped_subtotal;?>" readonly>
                             </div>
                         </div>
                         
@@ -88,7 +88,7 @@
                                 <label for="">&nbsp;</label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><b>Total:</b></span>
-                                    <input type="text" class="form-control" name="total" readonly="readonly">
+                                    <input type="text" class="form-control control-center" name="total" readonly="readonly">
                                 </div>
                             </div>
                         </div>
@@ -387,3 +387,17 @@
 
 
 </script>
+<style>
+    .control-center {
+       font-size: 18px;
+       text-align: center;
+       color: #fd0054;
+       font-weight: bold;
+    }
+    .md-import{
+        font-size: 14px;
+        text-align: center;
+        color: #0b409c;
+        font-weight: bold;
+    }
+</style>

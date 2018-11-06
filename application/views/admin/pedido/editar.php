@@ -111,6 +111,12 @@
                             </tr>
                         </thead>
                          <tbody id="tbody_productos">
+                            <tr>
+                                <td colspan="7" style="text-align: center;">
+                                    
+                                <img height='100px' width='100px' src='<?= base_url()?>assets/img/loading.gif'><p>Cargando....</p>
+                                </td>
+                            </tr>
                             <!-- <?php if (!empty($detalle)):?>
                             <?php foreach($detalle as $det): ?>
                                 <tr>
@@ -162,30 +168,30 @@
                     </div>
                 </div>
                 <div class="col-md-12">
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         <label for="">Precio</label>
-                        <input type="text" class="form-control" readonly>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="">Cantidad</label>
-                        <input type="number" class="form-control" min="1" max="5" value="1">
+                        <input name="prod_precio" type="text" class="form-control" readonly>
                     </div>
                     <div class="col-md-6">
+                        <label for="">Cantidad</label>
+                        <input name="prod_cantidad" type="number" class="form-control" min="1" max="5" value="1">
+                    </div>
+                    <div class="col-md-12">
                         <label for="">Detalles</label>
-                        <input type="text" class="form-control">
+                        <input name="prod_detalle" type="text" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-12">
                     <hr>
                     <div class="col-md-6 col-md-offset-2">
                         <label for="">Importe Total</label>
-                        <input type="text" class="form-control" readonly>
+                        <input name="prod_importe" type="text" class="form-control">
                     </div>
                     <div class="col-md-4">
                         <label for="">&nbsp;</label>
                         <br>
-                        <button class="btn btn-success">Agregar</button>
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                        <button id="prod_agregar" class="btn btn-success">Agregar</button>
+                        <button id="prod_cancelar" type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
                     </div>   
                 </div>
             </div>
@@ -363,20 +369,30 @@
             success: function(resp){
                 // console.log(resp);
                 var data = JSON.parse(resp);
-                var tbody = get_id('tbody_productos');
                 var subtotal = 0;
-                let cadena = "<tr>";
-                for(const item in data){
-                    cadena += "<td>"+data[item]['dp_id']+"</td>"; 
-                    cadena += "<td>"+data[item]['cat_abrev']+' '+data[item]['producto']+"</td>"; 
-                    cadena += "<td>"+data[item]['dp_precio']+"</td>"; 
-                    cadena += "<td>"+data[item]['dp_cantidad']+"</td>"; 
-                    cadena += "<td>"+data[item]['dp_importe']+"</td>"; 
-                    cadena += "<td>"+data[item]['dp_detalle']+"</td>"; 
-                    cadena += "<td><button onclick='remover(event)' title='remover' class='btn btn-danger'>remover</button</td>";
+                let cadena = "";
+                if (data.length > 0) {
+                    cadena += "<tr>";
+                    for(const item in data){
+                        cadena += "<td>"+data[item]['dp_id']+"</td>"; 
+                        cadena += "<td>"+data[item]['cat_abrev']+' '+data[item]['producto']+"</td>"; 
+                        cadena += "<td>"+data[item]['dp_precio']+"</td>"; 
+                        cadena += "<td>"+data[item]['dp_cantidad']+"</td>"; 
+                        cadena += "<td>"+data[item]['dp_importe']+"</td>"; 
+                        cadena += "<td>"+data[item]['dp_detalle']+"</td>"; 
+                        cadena += "<td><button onclick='remover(event)' title='remover' class='btn btn-danger'>remover</button</td>";
+                        cadena += "</tr>";
+                        subtotal = parseFloat(subtotal) + parseFloat(data[item]['dp_importe']);
+                    }
+
+                }else{
+                    cadena += "<tr>";
+                    cadena += "<td colspan='7' style='text-align:center'>";
+                    cadena += "<b class='redrosa'>No hay datos</b>";
+                    cadena += "</td>";
                     cadena += "</tr>";
-                    subtotal = parseFloat(subtotal) + parseFloat(data[item]['dp_importe']);
                 }
+
                 get_query('[name=subtotal]').value = subtotal;
                 get_id('tbody_productos').innerHTML = cadena;
 
@@ -438,15 +454,51 @@
     }
 
     document.querySelector('[name=select_categoria]').addEventListener('change', function(){
-        // console.log(this.value);
         cargar_productos(this.value);
+        calcular_precio_producto();
     }, false);
 
+    document.querySelector('[name=select_producto]').addEventListener('change', function(){
+        calcular_precio_producto();
+    }, false);
+
+    document.querySelector('[name=prod_cantidad]').addEventListener('keyup', function(){
+        calcular_precio_producto();
+    }, false);
+
+    document.querySelector('#prod_agregar').addEventListener('click', function(){
+        var ap_producto = get_query('[name=select_producto]').value.split('-')[0];
+        var ap_precio   = get_query('[name=prod_precio]').value;
+        var ap_cantidad = get_query('[name=prod_cantidad]').value;
+        var ap_detalle  = get_query('[name=prod_detalle]').value;
+        var ap_importe  = get_query('[name=prod_importe]').value;
+
+        if (ap_producto && ap_precio && ap_cantidad>0 && ap_importe) {
+            // alert("existe : "+ap_producto+" - "+ap_cantidad);
+            agregar_producto(ap_producto,ap_precio,ap_cantidad,ap_detalle,ap_importe);
+
+        }else{
+            alert("nop "+ap_importe);
+
+        }
+        
+    }, false);
+
+    document.querySelector('#prod_cancelar').addEventListener('click', function(){
+        get_query('[name=prod_precio]').value = '';
+        get_query('[name=prod_cantidad]').value = '1';
+        get_query('[name=prod_importe]').value = '';
+    }, false);
 
     function cargar_modal_producto(){
         $('#modal-producto').modal();
+        get_query('[name=prod_precio]').value = '';
+        get_query('[name=prod_cantidad]').value = '1';
+        get_query('[name=prod_importe]').value = '';
+
         cargar_categorias();
         cargar_productos(get_query('[name=select_categoria]').value);
+        calcular_precio_producto();
 
     }
 
@@ -477,7 +529,8 @@
 
     function cargar_productos(categoria_actual){
         var cadena_prod = "";
-
+        get_query('[name=prod_precio]').value = "";
+        get_query('[name=prod_importe]').value = '';
         if (categoria_actual != '') {
             $.ajax({
                 url: base_url+'mantenimiento/productos/categoria_productos_rest',
@@ -487,8 +540,9 @@
                 },
                 success: function(resp){
                     var producto = JSON.parse(resp);
-                    console.log(producto);
+                    // console.log(producto);
                     if (producto.length > 0) {
+                        cadena_prod += "<option value='' selected disabled hidden>Seleccione</option>"
                         for(prod in producto){
                             // console.log(producto[prod]['prod_nom']);
                             cadena_prod += "<option value='"+producto[prod]['prod_id']+"-"+producto[prod]['prod_prec']+"'>";
@@ -505,10 +559,83 @@
                 }
             });
         }else{
-            cadena_prod += "<option>--Seleccione una categoria--</option>";
+            cadena_prod += "<option value=''>--Seleccione una categoria--</option>";
             get_query('[name=select_producto]').innerHTML = cadena_prod;
         }
     }
+
+    function calcular_precio_producto(){
+        if (get_query('[name=select_producto]').value != '') {
+            var producto = get_query('[name=select_producto]').value.split('-');
+            var precio   = parseFloat(producto[1]);
+            var cantidad = parseFloat(get_query('[name=prod_cantidad]').value);
+            var importe  = parseFloat(precio) * cantidad;  
+            get_query('[name="prod_precio"]').value  = precio.toFixed(2);
+            get_query('[name="prod_importe"]').value = importe.toFixed(2);
+
+        }else{
+
+        // console.log(producto); 
+        }
+    }
+
+    function agregar_producto(producto, precio, cantidad, detalle, importe){
+
+       
+        var subtotal_actual = parseFloat(get_query('[name=subtotal]').value);
+        var nuevo_subtotal = parseFloat(subtotal_actual) + parseFloat(importe);
+        $.ajax({
+            url: base_url+'movimientos/pedido/actualizar_detalle_pedido',
+            method : 'POST',
+            data:{
+                pedido: get_query('[name=id]').value,
+                producto: producto,
+                precio : precio,
+                cantidad: cantidad,
+                detalle : detalle,
+                importe : importe,
+                n_subtotal : nuevo_subtotal
+
+            },
+            success: function(resp){
+                $("#modal-producto").modal('hide');
+                cargar_productos_pedido();
+                
+                switch (resp) {
+                    case '0':
+                        iziToast.show({
+                            title: 'Error: ',
+                            message: 'El proceso no se completo, intente de nuevo.',
+                            position: 'topCenter',
+                            backgroundColor: '#fd0054',
+                            titleColor: '#fff',
+                            messageColor: '#fff',
+                            timeout : 3000, 
+                            icon : 'fa fa-info',
+                            iconColor: '#fff'
+                        });
+                        break;
+                    case '1':
+                        iziToast.show({
+                            title: 'Correcto: ',
+                            message: 'Producto agregado',
+                            position: 'topCenter',
+                            backgroundColor: '#a1c45a',
+                            messageColor: '#144c52',
+                            titleColor: '#144c52',
+                            timeout : 3000,
+                            icon : 'fa fa-check',
+                            iconColor: '#a1c45a' 
+                        });
+                        break;
+                    default:
+                        // statements_def
+                        break;
+                }
+            }
+        });
+
+    } 
 </script>
 
 <style>
@@ -520,5 +647,11 @@
     }
     .redrosa{
         color: #fd0054;
+    }
+    .ecogreen{
+        color: #00adb5;
+    }
+    tr {
+        transition: all 2s ease-in;
     }
 </style>

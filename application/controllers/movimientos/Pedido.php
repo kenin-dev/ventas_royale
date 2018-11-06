@@ -220,4 +220,55 @@ class Pedido extends CI_Controller {
 		// echo json_encode($eliminar);
 	}
 
+	public function actualizar_detalle_pedido(){
+		$id_pedido = $this->input->post('pedido');
+		$id_producto = $this->input->post('producto');
+		$precio = $this->input->post('precio');
+		$cantidad = $this->input->post('cantidad');
+		$detalle = $this->input->post('detalle');
+		$importe = $this->input->post('importe');
+		$subtotal = $this->input->post('n_subtotal');
+
+		if ($id_pedido && $id_producto &&  $precio && $cantidad && $importe) {
+			$detalle = array(
+				'pedido_id' => $id_pedido,
+				'producto_id' => $id_producto, 
+				'dp_precio' => $precio,
+				'dp_cantidad' => $cantidad,
+				'dp_importe'=> $importe,
+				'dp_detalle'=> $detalle
+			);
+			if ($this->Pedido_model->insertar_detalle_pedido($detalle) == 1) {
+				$data_pedido = array(
+					'ped_subtotal' => $subtotal
+				);
+				
+				$actualizar_pedido = $this->Pedido_model->actualizar($id_pedido,$data_pedido);
+
+				if (count($actualizar_pedido) > 0) {
+					echo '1';
+				}else{
+					echo "0";
+				}
+
+			}else{
+				echo '0';
+			}
+		}else{
+			echo '0';
+		}
+	}
+
 }
+// $detalle  = array(
+// 					'pedido_id' => $pedido_id,
+// 					'producto_id' => $productos[$i], 
+// 					'dp_precio' => $precios[$i],
+// 					'dp_cantidad' => $cantidades[$i],
+// 					'dp_importe'=> $importes[$i],
+// 					'dp_detalle'=> $detalles[$i]
+// 				);
+
+// 				if ($this->Pedido_model->insertar_detalle_pedido($detalle) == 1) {
+// 					$cont++;
+// 				}

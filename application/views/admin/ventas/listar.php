@@ -1,90 +1,96 @@
 <div class="content-wrapper">
-    <section class="content-header">
-        <h1>
-        Ventas
-        <small>Lista</small>
-        </h1>
-    </section>
-    <section class="content">
-        <div class="box box-solid">
-            <div class="box-body">
-                <div class="row">
-                    <div class="col-md-12 ">
-                        <a href="<?php echo base_url();?>movimientos/pedido/nuevo" class="btn btn-warning">Nuevo Pedido&nbsp;
-                        <span class="fa fa-plus center-block"></span></a>
-                        <a href="<?php echo base_url();?>movimientos/pedido/listar" class="btn btn-info">Lista de Pedidos&nbsp;
-                        <span class="fa fa-list center-block"></span></a>
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-md-12">
-                        <?php 
-                            if ($this->session->flashdata('correcto')) {
-                         ?>
-                            <div class="alert alert-success alert-dismissible" role="alert">
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <p><strong>Correcto : </strong><?php echo $this->session->flashdata('correcto'); ?></p>
+    <div class="content">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2>
+                Ventas
+                <small>[ Lista ]</small>
+                </h2>
+            </div>
+            <div class="panel-body">
+                <section class="content">
+                    <div class="box box-solid">
+                        <div class="box-body">
+                            <div class="row">
+                                <div class="col-md-12 ">
+                                    <a href="<?php echo base_url();?>movimientos/pedido/nuevo" class="btn btn-warning">Nuevo Pedido&nbsp;
+                                    <span class="fa fa-plus center-block"></span></a>
+                                    <a href="<?php echo base_url();?>movimientos/pedido/listar" class="btn btn-info">Lista de Pedidos&nbsp;
+                                    <span class="fa fa-list center-block"></span></a>
+                                </div>
                             </div>
-                        <?php 
-                            }
-                         ?>
-                         <!--  -->
-                        <?php 
-                            if ($this->session->flashdata('error')) {
-                         ?>
-                            <div class="alert alert-danger alert-dismissible" role="alert">
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <p><strong>Error : </strong><?php echo $this->session->flashdata('error'); ?></p>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <?php 
+                                        if ($this->session->flashdata('correcto')) {
+                                     ?>
+                                        <div class="alert alert-success alert-dismissible" role="alert">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            <p><strong>Correcto : </strong><?php echo $this->session->flashdata('correcto'); ?></p>
+                                        </div>
+                                    <?php 
+                                        }
+                                     ?>
+                                     <!--  -->
+                                    <?php 
+                                        if ($this->session->flashdata('error')) {
+                                     ?>
+                                        <div class="alert alert-danger alert-dismissible" role="alert">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            <p><strong>Error : </strong><?php echo $this->session->flashdata('error'); ?></p>
+                                        </div>
+                                    <?php 
+                                        }
+                                     ?>
+                                    <table id="example1" class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Fecha</th>
+                                                <th>Cliente</th>
+                                                <th>Tipo de consumo</th>                         
+                                                <th>Destino</th>
+                                                <th>Total</th>
+                                                <th>Recibido</th>
+                                                <th>Devuelto</th>
+                                                <th>Opciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php if (!empty($ventas)): ?>
+                                            <?php foreach($ventas as $venta):?>
+                                                <tr>
+                                                    <td><?php echo $venta->ven_id;?></td>
+                                                    <td><?php echo $venta->ven_fecha;?></td>
+                                                    <td><?php echo $venta->cli_nombres;?></td>
+                                                    <td><?php echo $venta->ped_tipo_consumo;?></td>
+                                                    <td><?php echo $venta->ped_destino;?></td>
+                                                    <td><?php echo $venta->ven_total;?></td>
+                                                    <td><?php echo $venta->ven_monto_recibido;?></td>
+                                                    <td><?php echo $venta->ven_monto_devuelto;?></td>
+                                                    <td>
+                                                        <button class="btn btn-primary" onclick="modal_imprimir(<?= $venta->ven_id; ?>)">
+                                                            <span class="fa fa-print">
+                                                            </span>
+                                                                Imprimir
+                                                        </button>
+                                                        <!-- <a onclick='eliminar(event)' href="<?php echo base_url()?>movimientos/pedido/eliminar/<?php echo $venta->ped_id;?>" class="btn btn-danger">Eliminar</a> -->
+                                                    </td>
+                                                        
+                                                </tr>
+                                            <?php endforeach;?>
+                                        <?php endif ?>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                        <?php 
-                            }
-                         ?>
-                        <table id="example1" class="table table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Fecha</th>
-                                    <th>Cliente</th>
-                                    <th>Tipo de consumo</th>                         
-                                    <th>Destino</th>
-                                    <th>Total</th>
-                                    <th>Recibido</th>
-                                    <th>Devuelto</th>
-                                    <th>Opciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            <?php if (!empty($ventas)): ?>
-                                <?php foreach($ventas as $venta):?>
-                                    <tr>
-                                        <td><?php echo $venta->ven_id;?></td>
-                                        <td><?php echo $venta->ven_fecha;?></td>
-                                        <td><?php echo $venta->cli_nombres;?></td>
-                                        <td><?php echo $venta->ped_tipo_consumo;?></td>
-                                        <td><?php echo $venta->ped_destino;?></td>
-                                        <td><?php echo $venta->ven_total;?></td>
-                                        <td><?php echo $venta->ven_monto_recibido;?></td>
-                                        <td><?php echo $venta->ven_monto_devuelto;?></td>
-                                        <td>
-                                            <button class="btn btn-primary" onclick="modal_imprimir(<?= $venta->ven_id; ?>)">
-                                                <span class="fa fa-print">
-                                                </span>
-                                                    Imprimir
-                                            </button>
-                                            <!-- <a onclick='eliminar(event)' href="<?php echo base_url()?>movimientos/pedido/eliminar/<?php echo $venta->ped_id;?>" class="btn btn-danger">Eliminar</a> -->
-                                        </td>
-                                            
-                                    </tr>
-                                <?php endforeach;?>
-                            <?php endif ?>
-                            </tbody>
-                        </table>
+                        </div>
                     </div>
-                </div>
+                </section>
             </div>
         </div>
-    </section>
+    </div>
 </div>
 
 <div class="modal fade" id="modal-doc">
